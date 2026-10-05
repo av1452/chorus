@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "name": "Living Room",
+  "remote_model": "Harmony 650",
+  "remote_skin": 72,
+  "created": "2026-10-04T18:00:00+00:00",
+  "modified": "2026-10-04T18:00:00+00:00",
+  "notes": "Worked example. The IR durations here are synthesised from protocol specs, not learned from real hardware, so treat them as structure to copy rather than codes to use.",
+  "devices": {
+    "TV": {
+      "name": "TV",
+      "manufacturer": "Sony",
+      "model": "KDL-55W800",
+      "type": "television",
+      "power_style": "discrete",
+      "inputs": ["InputHDMI1", "InputHDMI2"],
+      "power_on_delay_ms": 5000,
+      "inter_command_delay_ms": 150,
+      "repeat_count": 3,
+      "notes": "Sony devices want three frames per press, hence repeat_count 3. Discrete power codes are undocumented on this set but do work.",
+      "functions": {
+        "PowerOn": {
+          "name": "PowerOn", "label": "Power On", "frequency": 40000,
+          "durations": [2400, 600, 600, 600, 1200, 600, 1200, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 600, 600, 600, 45000],
+          "protocol": "SIRC", "source": "synthesised:SIRC"
+        },
+        "PowerOff": {
+          "name": "PowerOff", "label": "Power Off", "frequency": 40000,
+          "durations": [2400, 600, 1200, 600, 1200, 600, 1200, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 600, 600, 600, 45000],
+          "protocol": "SIRC", "source": "synthesised:SIRC"
+        },
+        "InputHDMI1": {
+          "name": "InputHDMI1", "label": "HDMI 1", "frequency": 40000,
+          "durations": [2400, 600, 600, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 600, 600, 600, 600, 600, 45000],
+          "protocol": "SIRC", "source": "synthesised:SIRC"
+        },
+        "InputHDMI2": {
+          "name": "InputHDMI2", "label": "HDMI 2", "frequency": 40000,
+          "durations": [2400, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 1200, 600, 600, 600, 600, 600, 600, 600, 600, 45000],
+          "protocol": "SIRC", "source": "synthesised:SIRC"
+        }
+      }
+    },
+    "AVR": {
+      "name": "AVR",
+      "manufacturer": "Denon",
+      "model": "AVR-S750H",
+      "type": "av_receiver",
+      "power_style": "discrete",
+      "inputs": ["InputCable", "InputBluray"],
+      "power_on_delay_ms": 3000,
+      "inter_command_delay_ms": 100,
+      "repeat_count": 1,
+      "notes": "Volume keys route here, not to the TV.",
+      "functions": {
+        "PowerOn": {
+          "name": "PowerOn", "label": "Power On", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "PowerOff": {
+          "name": "PowerOff", "label": "Power Off", "frequency": 38000,
+          "durations": [9000, 4500, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "VolumeUp": {
+          "name": "VolumeUp", "label": "Volume +", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "VolumeDown": {
+          "name": "VolumeDown", "label": "Volume -", "frequency": 38000,
+          "durations": [9000, 4500, 560, 560, 560, 1690, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "Mute": {
+          "name": "Mute", "label": "Mute", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "InputCable": {
+          "name": "InputCable", "label": "Cable", "frequency": 38000,
+          "durations": [9000, 4500, 560, 560, 560, 560, 560, 1690, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "InputBluray": {
+          "name": "InputBluray", "label": "Blu-ray", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 560, 560, 1690, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        }
+      }
+    },
+    "CableBox": {
+      "name": "CableBox",
+      "manufacturer": "Generic",
+      "model": "DCX3200",
+      "type": "cable_satellite",
+      "power_style": "none",
+      "inputs": [],
+      "power_on_delay_ms": 0,
+      "inter_command_delay_ms": 100,
+      "repeat_count": 1,
+      "notes": "Left powered on permanently, so power_style is none. This is often the right call for a DVR.",
+      "functions": {
+        "ChannelUp": {
+          "name": "ChannelUp", "label": "Channel +", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 560, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "ChannelDown": {
+          "name": "ChannelDown", "label": "Channel -", "frequency": 38000,
+          "durations": [9000, 4500, 560, 560, 560, 1690, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "Guide": {
+          "name": "Guide", "label": "Guide", "frequency": 38000,
+          "durations": [9000, 4500, 560, 1690, 560, 1690, 560, 560, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        },
+        "OK": {
+          "name": "OK", "label": "OK", "frequency": 38000,
+          "durations": [9000, 4500, 560, 560, 560, 560, 560, 1690, 560, 1690, 560, 560, 560, 560, 560, 560, 560, 40000],
+          "protocol": "", "source": "synthesised"
+        }
+      }
+    }
+  },
+  "activities": {
+    "WatchTV": {
+      "name": "WatchTV",
+      "label": "Watch TV",
+      "icon": "",
+      "volume_device": "AVR",
+      "channel_device": "CableBox",
+      "primary_device": "CableBox",
+      "buttons": {
+        "VolumeUp": "AVR/VolumeUp",
+        "VolumeDown": "AVR/VolumeDown",
+        "Mute": "AVR/Mute",
+        "ChannelUp": "CableBox/ChannelUp",
+        "ChannelDown": "CableBox/ChannelDown",
+        "Guide": "CableBox/Guide",
+        "OK": "CableBox/OK"
+      },
+      "start_sequence": [
+        { "device": "TV", "function": "PowerOn", "delay_ms": 5000, "repeat": 1 },
+        { "device": "AVR", "function": "PowerOn", "delay_ms": 3000, "repeat": 1 },
+        { "device": "TV", "function": "InputHDMI1", "delay_ms": 500, "repeat": 1 },
+        { "device": "AVR", "function": "InputCable", "delay_ms": 500, "repeat": 1 }
+      ],
+      "stop_sequence": [
+        { "device": "AVR", "function": "PowerOff", "delay_ms": 500, "repeat": 1 },
+        { "device": "TV", "function": "PowerOff", "delay_ms": 0, "repeat": 1 }
+      ]
+    },
+    "WatchBluray": {
+      "name": "WatchBluray",
+      "label": "Watch Blu-ray",
+      "icon": "",
+      "volume_device": "AVR",
+      "channel_device": "",
+      "primary_device": "AVR",
+      "buttons": {
+        "VolumeUp": "AVR/VolumeUp",
+        "VolumeDown": "AVR/VolumeDown",
+        "Mute": "AVR/Mute"
+      },
+      "start_sequence": [
+        { "device": "TV", "function": "PowerOn", "delay_ms": 5000, "repeat": 1 },
+        { "device": "AVR", "function": "PowerOn", "delay_ms": 3000, "repeat": 1 },
+        { "device": "TV", "function": "InputHDMI1", "delay_ms": 500, "repeat": 1 },
+        { "device": "AVR", "function": "InputBluray", "delay_ms": 500, "repeat": 1 }
+      ],
+      "stop_sequence": [
+        { "device": "AVR", "function": "PowerOff", "delay_ms": 500, "repeat": 1 },
+        { "device": "TV", "function": "PowerOff", "delay_ms": 0, "repeat": 1 }
+      ]
+    }
+  },
+  "global_buttons": {
+    "Mute": "AVR/Mute"
+  }
+}

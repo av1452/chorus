@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>harmonyforge</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #14181f; --muted: #5d6673;
+    --line: #dfe3e9; --accent: #1f6feb; --accent-ink: #ffffff;
+    --warn: #9a6700; --warn-bg: #fff8e5; --danger: #b42318; --ok: #11734b;
+    --radius: 10px; --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216; --panel: #171b21; --ink: #e8eaed; --muted: #9aa4b2;
+      --line: #2a313b; --accent: #4493f8; --accent-ink: #0b0e12;
+      --warn: #d4a72c; --warn-bg: #2a2313; --danger: #ff7b72; --ok: #3fb950;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    padding: 12px 20px; display: flex; gap: 16px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .brand { font-weight: 650; letter-spacing: -0.01em; }
+  .brand span { color: var(--muted); font-weight: 400; margin-left: 6px; font-size: 12px; }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav button {
+    background: none; border: 1px solid transparent; color: var(--muted);
+    padding: 6px 12px; border-radius: 7px; cursor: pointer; font: inherit;
+  }
+  nav button:hover { background: var(--bg); color: var(--ink); }
+  nav button[aria-selected="true"] {
+    background: var(--accent); color: var(--accent-ink); font-weight: 550;
+  }
+  .status { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .dot.on { background: var(--ok); }
+  .dot.off { background: var(--danger); }
+  main { max-width: 1120px; margin: 0 auto; padding: 20px; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 16px;
+  }
+  .panel > h2 { margin: 0 0 4px; font-size: 16px; }
+  .panel > h2 + p { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+  input, select, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 7px; background: var(--bg); color: var(--ink); font: inherit;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  textarea { font-family: var(--mono); font-size: 12px; min-height: 70px; resize: vertical; }
+  button.btn {
+    padding: 8px 14px; border-radius: 7px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--ink); cursor: pointer; font: inherit;
+  }
+  button.btn:hover { border-color: var(--accent); }
+  button.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 550; }
+  button.btn.danger { color: var(--danger); }
+  button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 550; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+  tbody tr:hover { background: var(--bg); }
+  .tablewrap { overflow-x: auto; }
+  .pill {
+    display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 11px;
+    background: var(--bg); border: 1px solid var(--line); color: var(--muted);
+  }
+  .mono { font-family: var(--mono); font-size: 12px; }
+  .warn { background: var(--warn-bg); border-left: 3px solid var(--warn); padding: 10px 12px; border-radius: 6px; margin: 6px 0; font-size: 13px; }
+  .empty { color: var(--muted); text-align: center; padding: 28px 12px; }
+  .empty code { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .hidden { display: none !important; }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); padding: 10px 18px;
+    border-radius: 8px; font-size: 13px; z-index: 50; max-width: 90vw;
+  }
+  .steps li { margin-bottom: 6px; }
+  .seqrow { display: grid; grid-template-columns: 1fr 1fr 90px 36px; gap: 8px; margin-bottom: 8px; }
+  .btnmap { display: grid; grid-template-columns: 1fr 1fr 36px; gap: 8px; margin-bottom: 8px; }
+  @media (max-width: 620px) {
+    .seqrow, .btnmap { grid-template-columns: 1fr; }
+    main { padding: 14px; }
+    header { padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">harmonyforge<span id="version"></span></div>
+  <nav id="tabs">
+    <button data-tab="remote" aria-selected="true">Remote</button>
+    <button data-tab="devices" aria-selected="false">Devices</button>
+    <button data-tab="activities" aria-selected="false">Activities</button>
+    <button data-tab="codes" aria-selected="false">Code library</button>
+  </nav>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusText">checking…</span></div>
+</header>
+
+<main>
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tab-remote">
+    <div class="panel">
+      <h2>Connected remote</h2>
+      <p>USB remotes must be plugged in with a data cable. Hub-based remotes are not programmed over USB.</p>
+      <div id="remoteInfo" class="empty">Looking for a remote…</div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" onclick="refreshStatus()">Re-scan USB</button>
+        <button class="btn primary" id="backupBtn" onclick="doBackup()">Back up configuration</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Configuration</h2>
+      <p id="configPath"></p>
+      <div class="grid">
+        <div><label>Config name</label><input id="cfgName"></div>
+        <div><label>Target remote model</label><input id="cfgModel" placeholder="Harmony 650"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" onclick="saveConfigMeta()">Save</button>
+        <button class="btn" onclick="validateConfig()">Validate</button>
+        <button class="btn" onclick="downloadConfig()">Download JSON</button>
+      </div>
+      <div id="validation"></div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tab-devices" class="hidden">
+    <div class="panel">
+      <h2>Devices</h2>
+      <p>One entry per physical box. Prefer discrete PowerOn/PowerOff codes when the device has them — toggle power is the main cause of activities leaving things in the wrong state.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Power</th><th>Functions</th><th></th></tr></thead>
+          <tbody id="deviceRows"></tbody>
+        </table>
+      </div>
+      <div id="noDevices" class="empty">
+        No devices yet. Add one below, then give it IR codes by learning them
+        from the original remote (<code>harmonyforge learn</code>) or importing
+        a code set.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 id="deviceFormTitle">Add a device</h2>
+      <p>Delays matter: a TV that takes 4 s to accept input changes needs a power-on delay at least that long.</p>
+      <input type="hidden" id="devOriginal">
+      <div class="grid">
+        <div><label>Name</label><input id="devName" placeholder="Living Room TV"></div>
+        <div><label>Manufacturer</label><input id="devMaker" placeholder="Sony"></div>
+        <div><label>Model</label><input id="devModel" placeholder="KDL-55W800"></div>
+        <div><label>Type</label><select id="devType"></select></div>
+        <div><label>Power style</label><select id="devPower"></select></div>
+        <div><label>Power-on delay (ms)</label><input id="devDelay" type="number" value="2000" min="0" step="100"></div>
+        <div><label>Inter-command delay (ms)</label><input id="devGap" type="number" value="100" min="0" step="10"></div>
+        <div><label>Repeat count</label><input id="devRepeat" type="number" value="1" min="1" max="5"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" onclick="saveDevice()">Save device</button>
+        <button class="btn" onclick="resetDeviceForm()">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="functionPanel">
+      <h2>Functions on <span id="fnDeviceName">—</span></h2>
+      <p>Each function is one IR command. Add them from Pronto hex, synthesise them from a protocol, or learn them from the original remote.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Name</th><th>Protocol</th><th>Carrier</th><th>Source</th></tr></thead>
+          <tbody id="functionRows"></tbody>
+        </table>
+      </div>
+      <div class="grid" style="margin-top:16px">
+        <div><label>Function name</label><input id="fnName" placeholder="PowerOn"></div>
+        <div><label>Import from code set</label><select id="fnCodeSet"></select></div>
+      </div>
+      <div style="margin-top:12px">
+        <label>Pronto hex (paste from a code list)</label>
+        <textarea id="fnPronto" placeholder="0000 006D 0022 0002 0157 00AB …"></textarea>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div><label>…or synthesise: protocol</label><select id="fnProtocol"></select></div>
+        <div><label>address</label><input id="fnAddress" placeholder="0x04"></div>
+        <div><label>command</label><input id="fnCommand" placeholder="0x0C"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" onclick="addFunction()">Add function</button>
+        <button class="btn" onclick="importCodeSet()">Import whole code set</button>
+        <button class="btn" onclick="learnFunction()">Learn from remote</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tab-activities" class="hidden">
+    <div class="panel">
+      <h2>Activities</h2>
+      <p>An activity powers on the right devices, selects the right inputs, then routes each button to a device.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Name</th><th>Start steps</th><th>Buttons</th><th>Devices</th><th></th></tr></thead>
+          <tbody id="activityRows"></tbody>
+        </table>
+      </div>
+      <div id="noActivities" class="empty">No activities yet.</div>
+    </div>
+
+    <div class="panel">
+      <h2 id="activityFormTitle">Add an activity</h2>
+      <input type="hidden" id="actOriginal">
+      <div class="grid">
+        <div><label>Name</label><input id="actName" placeholder="WatchTV"></div>
+        <div><label>Label shown on remote</label><input id="actLabel" placeholder="Watch TV"></div>
+        <div><label>Primary device (nav keys)</label><select id="actPrimary"></select></div>
+        <div><label>Volume device</label><select id="actVolume"></select></div>
+        <div><label>Channel device</label><select id="actChannel"></select></div>
+      </div>
+
+      <h3 style="font-size:14px;margin:20px 0 8px">Start sequence</h3>
+      <div id="startSeq"></div>
+      <button class="btn" onclick="addSeqRow('startSeq')">+ Add step</button>
+
+      <h3 style="font-size:14px;margin:20px 0 8px">Stop sequence</h3>
+      <div id="stopSeq"></div>
+      <button class="btn" onclick="addSeqRow('stopSeq')">+ Add step</button>
+
+      <h3 style="font-size:14px;margin:20px 0 8px">Button mapping</h3>
+      <div id="buttonMap"></div>
+      <button class="btn" onclick="addButtonRow()">+ Add button</button>
+
+      <div class="row" style="margin-top:18px">
+        <button class="btn primary" onclick="saveActivity()">Save activity</button>
+        <button class="btn" onclick="resetActivityForm()">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tab-codes" class="hidden">
+    <div class="panel">
+      <h2>Code library</h2>
+      <p id="libPath"></p>
+      <div class="row">
+        <div style="flex:1;min-width:200px"><label>Search</label><input id="codeSearch" placeholder="sony, samsung, bravia…" oninput="loadCodes()"></div>
+      </div>
+      <div class="tablewrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Slug</th><th>Device</th><th>Functions</th><th>Source</th></tr></thead>
+          <tbody id="codeRows"></tbody>
+        </table>
+      </div>
+      <div id="noCodes" class="empty">
+        The library is empty. Populate it from your own remotes with
+        <code>harmonyforge learn --device "Sony TV" PowerOn VolumeUp</code>,
+        or import a collection with
+        <code>harmonyforge codes import ~/Flipper-IRDB</code>.
+      </div>
+    </div>
+    <div class="panel hidden" id="codeDetail">
+      <h2 id="codeDetailTitle"></h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Function</th><th>Protocol</th><th>Pronto hex</th></tr></thead>
+          <tbody id="codeDetailRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let CONFIG = null, META = null, CODESETS = [];
+
+function toast(message, ms = 2600) {
+  const existing = document.querySelector(".toast");
+  if (existing) existing.remove();
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), ms);
+}
+
+async function api(path, body) {
+  const options = body
+    ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+    : {};
+  const response = await fetch(path, options);
+  const data = await response.json().catch(() => ({ error: "bad response" }));
+  if (!response.ok || data.error) throw new Error(data.error || `HTTP ${response.status}`);
+  return data;
+}
+
+/* ---- tabs ---- */
+$("tabs").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-tab]");
+  if (!button) return;
+  for (const b of $("tabs").children) b.setAttribute("aria-selected", String(b === button));
+  for (const name of ["remote", "devices", "activities", "codes"]) {
+    $(`tab-${name}`).classList.toggle("hidden", name !== button.dataset.tab);
+  }
+  if (button.dataset.tab === "codes") loadCodes();
+});
+
+/* ---- status ---- */
+async function refreshStatus() {
+  try {
+    const status = await api("/api/status");
+    const attached = status.remotes || [];
+    $("dot").className = "dot " + (status.available ? "on" : "off");
+    $("statusText").textContent = status.available
+      ? `${attached.length} remote attached`
+      : "no remote on USB";
+    $("backupBtn").disabled = !status.available;
+    $("remoteInfo").className = attached.length ? "" : "empty";
+    $("remoteInfo").innerHTML = attached.length
+      ? `<div class="tablewrap"><table><thead><tr><th>Device</th><th>VID:PID</th><th></th></tr></thead><tbody>${
+          attached.map((r) => `<tr><td>${esc(r.label)}</td><td class="mono">${r.vendor_id}:${r.product_id}</td><td>${
+            r.usbnet ? '<span class="pill">usbnet — not programmable yet</span>' : ""
+          }</td></tr>`).join("")
+        }</tbody></table></div>
+        <p style="color:var(--muted);font-size:13px;margin-top:10px">Run <code class="mono">harmonyforge identify</code> for firmware, architecture and serial numbers.</p>`
+      : `No Harmony remote found on USB.<br><br>Check that the cable carries data (charge-only cables are the usual culprit), and that older remotes are powered on.
+         <br><br>Hub-based remotes (Hub, Elite, Companion, Ultimate) never appear on USB — use <code>harmonyforge hub discover</code>.`;
+  } catch (error) {
+    $("dot").className = "dot off";
+    $("statusText").textContent = "USB unavailable";
+    $("remoteInfo").className = "empty";
+    $("remoteInfo").textContent = String(error.message);
+  }
+}
+
+const esc = (value) =>
+  String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* ---- bootstrap ---- */
+async function boot() {
+  META = await api("/api/meta");
+  $("version").textContent = "v" + META.version;
+  $("configPath").textContent = META.config_path
+    ? `Editing ${META.config_path} — changes save automatically.`
+    : "No config file given. Start the server with --config path.json to persist edits.";
+  $("libPath").textContent = `Library directory: ${META.library_path}`;
+
+  fillSelect($("devType"), META.device_types);
+  fillSelect($("devPower"), META.power_styles);
+  fillSelect($("fnProtocol"), META.protocols);
+
+  await reloadConfig();
+  await refreshStatus();
+}
+
+function fillSelect(select, values, blankLabel) {
+  select.innerHTML = (blankLabel ? `<option value="">${blankLabel}</option>` : "") +
+    values.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+}
+
+async function reloadConfig() {
+  CONFIG = await api("/api/config");
+  $("cfgName").value = CONFIG.name || "";
+  $("cfgModel").value = CONFIG.remote_model || "";
+  renderDevices();
+  renderActivities();
+  refreshDeviceSelects();
+}
+
+/* ---- config meta ---- */
+async function saveConfigMeta() {
+  CONFIG.name = $("cfgName").value;
+  CONFIG.remote_model = $("cfgModel").value;
+  const result = await api("/api/config", CONFIG);
+  toast(result.saved ? `Saved to ${result.path}` : "Saved in memory (no --config given)");
+}
+
+async function validateConfig() {
+  const { warnings } = await api("/api/config/validate");
+  $("validation").innerHTML = warnings.length
+    ? `<h3 style="font-size:13px;margin:16px 0 6px">${warnings.length} problem(s)</h3>` +
+      warnings.map((w) => `<div class="warn">${esc(w)}</div>`).join("")
+    : `<div class="warn" style="border-left-color:var(--ok);background:transparent">No problems found.</div>`;
+}
+
+function downloadConfig() {
+  const blob = new Blob([JSON.stringify(CONFIG, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = (CONFIG.name || "harmony").replace(/\W+/g, "-").toLowerCase() + ".json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+async function doBackup() {
+  toast("Reading configuration from the remote — this takes a minute…", 8000);
+  try {
+    const result = await api("/api/backup", { path: "harmony-backup.bin" });
+    toast(`Backed up ${result.bytes.toLocaleString()} bytes from ${result.model} to ${result.path}`, 6000);
+  } catch (error) {
+    toast("Backup failed: " + error.message, 6000);
+  }
+}
+
+/* ---- devices ---- */
+function deviceList() { return Object.values(CONFIG.devices || {}); }
+
+function renderDevices() {
+  const devices = deviceList();
+  $("noDevices").classList.toggle("hidden", devices.length > 0);
+  $("deviceRows").innerHTML = devices.map((d) => `
+    <tr>
+      <td><strong>${esc(d.name)}</strong>${d.manufacturer ? `<br><span class="pill">${esc(d.manufacturer)} ${esc(d.model)}</span>` : ""}</td>
+      <td>${esc(d.type)}</td>
+      <td>${d.power_style === "toggle" ? '<span class="pill">toggle</span>' : esc(d.power_style)}</td>
+      <td>${Object.keys(d.functions || {}).length}</td>
+      <td>
+        <button class="btn" onclick="editDevice('${esc(d.name)}')">Edit</button>
+        <button class="btn" onclick="pickDevice('${esc(d.name)}')">Functions</button>
+        <button class="btn danger" onclick="deleteDevice('${esc(d.name)}')">Delete</button>
+      </td>
+    </tr>`).join("");
+}
+
+function editDevice(name) {
+  const d = CONFIG.devices[name];
+  $("devOriginal").value = name;
+  $("devName").value = d.name;
+  $("devMaker").value = d.manufacturer || "";
+  $("devModel").value = d.model || "";
+  $("devType").value = d.type;
+  $("devPower").value = d.power_style;
+  $("devDelay").value = d.power_on_delay_ms;
+  $("devGap").value = d.inter_command_delay_ms;
+  $("devRepeat").value = d.repeat_count;
+  $("deviceFormTitle").textContent = `Edit ${d.name}`;
+  $("devName").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function resetDeviceForm() {
+  $("devOriginal").value = "";
+  for (const id of ["devName", "devMaker", "devModel"]) $(id).value = "";
+  $("devDelay").value = 2000; $("devGap").value = 100; $("devRepeat").value = 1;
+  $("deviceFormTitle").textContent = "Add a device";
+}
+
+async function saveDevice() {
+  if (!$("devName").value.trim()) return toast("The device needs a name.");
+  try {
+    await api("/api/device", {
+      original_name: $("devOriginal").value,
+      name: $("devName").value.trim(),
+      manufacturer: $("devMaker").value.trim(),
+      model: $("devModel").value.trim(),
+      type: $("devType").value,
+      power_style: $("devPower").value,
+      power_on_delay_ms: +$("devDelay").value,
+      inter_command_delay_ms: +$("devGap").value,
+      repeat_count: +$("devRepeat").value,
+    });
+    await reloadConfig();
+    resetDeviceForm();
+    toast("Device saved.");
+  } catch (error) { toast(error.message, 5000); }
+}
+
+async function deleteDevice(name) {
+  if (!confirm(`Delete device "${name}" and all its codes?`)) return;
+  await api("/api/device/delete", { name });
+  await reloadConfig();
+  toast("Device deleted.");
+}
+
+/* ---- functions ---- */
+let currentDevice = null;
+
+function pickDevice(name) {
+  currentDevice = name;
+  $("fnDeviceName").textContent = name;
+  const functions = Object.values(CONFIG.devices[name].functions || {});
+  $("functionRows").innerHTML = functions.length
+    ? functions.map((f) => `<tr>
+        <td><strong>${esc(f.name)}</strong></td>
+        <td>${f.protocol ? esc(f.protocol) : '<span class="pill">raw</span>'}</td>
+        <td class="mono">${(f.frequency / 1000).toFixed(1)} kHz</td>
+        <td><span class="pill">${esc(f.source || "—")}</span></td>
+      </tr>`).join("")
+    : `<tr><td colspan="4" class="empty">No functions yet.</td></tr>`;
+  $("functionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  loadCodeSetOptions();
+}
+
+async function loadCodeSetOptions() {
+  try {
+    const { sets } = await api("/api/codes");
+    CODESETS = sets;
+    fillSelect($("fnCodeSet"), sets.map((s) => s.slug), "— none —");
+  } catch { /* library may be empty */ }
+}
+
+async function addFunction() {
+  if (!currentDevice) return toast("Pick a device first (Functions button).");
+  const name = $("fnName").value.trim();
+  if (!name) return toast("The function needs a name.");
+  const body = { device: currentDevice, name };
+  if ($("fnPronto").value.trim()) {
+    body.pronto = $("fnPronto").value.trim();
+  } else {
+    body.protocol = $("fnProtocol").value;
+    body.fields = {};
+    const address = $("fnAddress").value.trim();
+    const command = $("fnCommand").value.trim();
+    if (address) body.fields.address = parseInt(address, address.startsWith("0x") ? 16 : 10);
+    if (command) body.fields.command = parseInt(command, command.startsWith("0x") ? 16 : 10);
+  }
+  try {
+    const result = await api("/api/function", body);
+    await reloadConfig();
+    pickDevice(currentDevice);
+    $("fnName").value = ""; $("fnPronto").value = "";
+    toast(`Added ${result.function}${result.protocol ? " (" + result.protocol + ")" : ""}.`);
+  } catch (error) { toast(error.message, 5000); }
+}
+
+async function importCodeSet() {
+  if (!currentDevice) return toast("Pick a device first.");
+  const slug = $("fnCodeSet").value;
+  if (!slug) return toast("Choose a code set to import.");
+  try {
+    const result = await api("/api/device/import-codes", { device: currentDevice, slug });
+    await reloadConfig();
+    pickDevice(currentDevice);
+    toast(`Imported ${result.added} function(s).`);
+  } catch (error) { toast(error.message, 5000); }
+}
+
+async function learnFunction() {
+  if (!currentDevice) return toast("Pick a device first.");
+  const name = $("fnName").value.trim();
+  if (!name) return toast("Name the function before learning it.");
+  toast("Point the original remote at the Harmony's learning eye and press the button…", 8000);
+  try {
+    const result = await api("/api/learn", { device: currentDevice, name });
+    await reloadConfig();
+    pickDevice(currentDevice);
+    $("fnName").value = "";
+    toast(`Learned ${result.name}${result.protocol ? " — " + result.protocol : " (raw capture)"}.`, 5000);
+  } catch (error) { toast("Learn failed: " + error.message, 6000); }
+}
+
+/* ---- activities ---- */
+function renderActivities() {
+  const activities = Object.values(CONFIG.activities || {});
+  $("noActivities").classList.toggle("hidden", activities.length > 0);
+  $("activityRows").innerHTML = activities.map((a) => `
+    <tr>
+      <td><strong>${esc(a.label || a.name)}</strong><br><span class="pill">${esc(a.name)}</span></td>
+      <td>${(a.start_sequence || []).length}</td>
+      <td>${Object.keys(a.buttons || {}).length}</td>
+      <td>${esc([a.primary_device, a.volume_device, a.channel_device].filter(Boolean).join(", ") || "—")}</td>
+      <td>
+        <button class="btn" onclick="editActivity('${esc(a.name)}')">Edit</button>
+        <button class="btn danger" onclick="deleteActivity('${esc(a.name)}')">Delete</button>
+      </td>
+    </tr>`).join("");
+}
+
+function refreshDeviceSelects() {
+  const names = deviceList().map((d) => d.name);
+  for (const id of ["actPrimary", "actVolume", "actChannel"]) {
+    const previous = $(id).value;
+    fillSelect($(id), names, "— none —");
+    $(id).value = previous;
+  }
+}
+
+function seqRowHtml(step = {}) {
+  const names = deviceList().map((d) => d.name);
+  const functions = step.device && CONFIG.devices[step.device]
+    ? Object.keys(CONFIG.devices[step.device].functions || {}) : [];
+  return `<div class="seqrow">
+    <select class="seqDevice" onchange="syncSeqFunctions(this)">
+      <option value="">— device —</option>
+      ${names.map((n) => `<option ${n === step.device ? "selected" : ""}>${esc(n)}</option>`).join("")}
+    </select>
+    <select class="seqFunction">
+      ${functions.map((f) => `<option ${f === step.function ? "selected" : ""}>${esc(f)}</option>`).join("")}
+    </select>
+    <input class="seqDelay" type="number" value="${step.delay_ms ?? 500}" min="0" step="100" title="delay after, ms">
+    <button class="btn danger" onclick="this.closest('.seqrow').remove()">×</button>
+  </div>`;
+}
+
+function syncSeqFunctions(select) {
+  const device = CONFIG.devices[select.value];
+  const target = select.closest(".seqrow").querySelector(".seqFunction");
+  target.innerHTML = device
+    ? Object.keys(device.functions || {}).map((f) => `<option>${esc(f)}</option>`).join("")
+    : "";
+}
+
+function addSeqRow(containerId, step) {
+  $(containerId).insertAdjacentHTML("beforeend", seqRowHtml(step));
+}
+
+function buttonRowHtml(button = "", target = "") {
+  const options = [];
+  for (const device of deviceList()) {
+    for (const fn of Object.keys(device.functions || {})) options.push(`${device.name}/${fn}`);
+  }
+  return `<div class="btnmap">
+    <select class="bmButton">
+      ${(META.buttons || []).map((b) => `<option ${b === button ? "selected" : ""}>${esc(b)}</option>`).join("")}
+    </select>
+    <select class="bmTarget">
+      ${options.map((o) => `<option ${o === target ? "selected" : ""}>${esc(o)}</option>`).join("")}
+    </select>
+    <button class="btn danger" onclick="this.closest('.btnmap').remove()">×</button>
+  </div>`;
+}
+
+function addButtonRow(button, target) {
+  $("buttonMap").insertAdjacentHTML("beforeend", buttonRowHtml(button, target));
+}
+
+function editActivity(name) {
+  const a = CONFIG.activities[name];
+  $("actOriginal").value = name;
+  $("actName").value = a.name;
+  $("actLabel").value = a.label || "";
+  refreshDeviceSelects();
+  $("actPrimary").value = a.primary_device || "";
+  $("actVolume").value = a.volume_device || "";
+  $("actChannel").value = a.channel_device || "";
+  $("startSeq").innerHTML = (a.start_sequence || []).map(seqRowHtml).join("");
+  $("stopSeq").innerHTML = (a.stop_sequence || []).map(seqRowHtml).join("");
+  $("buttonMap").innerHTML = Object.entries(a.buttons || {}).map(([b, t]) => buttonRowHtml(b, t)).join("");
+  $("activityFormTitle").textContent = `Edit ${a.label || a.name}`;
+  $("actName").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function resetActivityForm() {
+  $("actOriginal").value = "";
+  $("actName").value = ""; $("actLabel").value = "";
+  $("startSeq").innerHTML = ""; $("stopSeq").innerHTML = ""; $("buttonMap").innerHTML = "";
+  $("activityFormTitle").textContent = "Add an activity";
+}
+
+function collectSeq(containerId) {
+  return [...$(containerId).querySelectorAll(".seqrow")].map((row) => ({
+    device: row.querySelector(".seqDevice").value,
+    function: row.querySelector(".seqFunction").value,
+    delay_ms: +row.querySelector(".seqDelay").value,
+    repeat: 1,
+  })).filter((s) => s.device && s.function);
+}
+
+async function saveActivity() {
+  const name = $("actName").value.trim();
+  if (!name) return toast("The activity needs a name.");
+  const buttons = {};
+  for (const row of $("buttonMap").querySelectorAll(".btnmap")) {
+    const button = row.querySelector(".bmButton").value;
+    const target = row.querySelector(".bmTarget").value;
+    if (button && target) buttons[button] = target;
+  }
+  try {
+    await api("/api/activity", {
+      original_name: $("actOriginal").value,
+      name, label: $("actLabel").value.trim(),
+      primary_device: $("actPrimary").value,
+      volume_device: $("actVolume").value,
+      channel_device: $("actChannel").value,
+      start_sequence: collectSeq("startSeq"),
+      stop_sequence: collectSeq("stopSeq"),
+      buttons,
+    });
+    await reloadConfig();
+    resetActivityForm();
+    toast("Activity saved.");
+  } catch (error) { toast(error.message, 5000); }
+}
+
+async function deleteActivity(name) {
+  if (!confirm(`Delete activity "${name}"?`)) return;
+  await api("/api/activity/delete", { name });
+  await reloadConfig();
+  toast("Activity deleted.");
+}
+
+/* ---- code library ---- */
+async function loadCodes() {
+  const query = $("codeSearch").value.trim();
+  const { sets } = await api("/api/codes" + (query ? `?q=${encodeURIComponent(query)}` : ""));
+  CODESETS = sets;
+  $("noCodes").classList.toggle("hidden", sets.length > 0);
+  $("codeRows").innerHTML = sets.map((s) => `<tr style="cursor:pointer" onclick="showCodeSet('${esc(s.slug)}')">
+    <td class="mono">${esc(s.slug)}</td>
+    <td>${esc(s.label)}</td>
+    <td>${s.function_count}</td>
+    <td><span class="pill">${esc(s.source || "—")}</span></td>
+  </tr>`).join("");
+}
+
+async function showCodeSet(slug) {
+  const detail = await api(`/api/codes/detail?slug=${encodeURIComponent(slug)}`);
+  $("codeDetail").classList.remove("hidden");
+  $("codeDetailTitle").textContent = detail.label;
+  $("codeDetailRows").innerHTML = Object.entries(detail.functions).map(([name, f]) => `<tr>
+    <td><strong>${esc(name)}</strong></td>
+    <td>${esc(f.protocol)}</td>
+    <td class="mono" style="word-break:break-all;max-width:420px">${esc(f.pronto)}</td>
+  </tr>`).join("");
+  $("codeDetail").scrollIntoView({ behavior: "smooth" });
+}
+
+boot().catch((error) => toast("Startup failed: " + error.message, 8000));
+setInterval(refreshStatus, 15000);
+</script>
+</body>
+</html>

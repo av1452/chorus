@@ -1,0 +1,19 @@
+# udev rules for Logitech Harmony remotes, for use with harmonyforge.
+#
+# Install:
+#   sudo cp 99-harmonyforge.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+# Grants the "plugdev" group read/write access. Add yourself to it if needed:
+#   sudo usermod -aG plugdev $USER
+# then log out and back in.
+
+# Logitech's Harmony product ID range.
+SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="c1[1-4][0-9a-f]", \
+  MODE="0660", GROUP="plugdev", ENV{ID_REMOTE_CONTROL}="1", \
+  SYMLINK+="harmony-%k"
+
+# Older remotes running the National Semiconductor USBN960x bootloader.
+SUBSYSTEM=="usb", ATTR{idVendor}=="0400", ATTR{idProduct}=="c359", \
+  MODE="0660", GROUP="plugdev", ENV{ID_REMOTE_CONTROL}="1", \
+  SYMLINK+="harmony-%k"

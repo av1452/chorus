@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "harmonyforge"
+version = "0.1.0"
+description = "Program Logitech Harmony remotes without Logitech. An open replacement for the retired MyHarmony software."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "harmonyforge contributors" }]
+keywords = [
+    "logitech", "harmony", "myharmony", "universal-remote", "infrared",
+    "ir", "pronto", "lirc", "home-theater", "usb", "hid",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Home Automation",
+    "Topic :: System :: Hardware :: Universal Serial Bus (USB)",
+]
+dependencies = ["pyusb>=1.2"]
+
+[project.optional-dependencies]
+hidapi = ["hidapi>=0.14"]
+yaml = ["PyYAML>=6.0"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4"]
+all = ["hidapi>=0.14", "PyYAML>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/av1452/harmonyforge"
+Issues = "https://github.com/av1452/harmonyforge/issues"
+Documentation = "https://github.com/av1452/harmonyforge/tree/main/docs"
+
+[project.scripts]
+harmonyforge = "harmonyforge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+harmonyforge = ["server/static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# One-off code generators: compact parsing style is deliberate, and they are
+# build-time scripts rather than shipped library code.
+"tools/*.py" = ["E701", "E702", "B905"]
