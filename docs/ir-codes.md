@@ -28,7 +28,7 @@ capture.
 | Protocol | Carrier | Bits | Fields | Notes |
 |---|---|---|---|---|
 | NEC | 38 kHz | 32 | address, command | Most common. Sends each byte with its complement as a checksum. |
-| NECext | 38 kHz | 32 | address (16-bit), command | Trades the address checksum for a wider address. |
+| NECext | 38 kHz | 32 | address (16-bit), command (16-bit) | No checksum on either field -- real-world example: Apple TV remotes. |
 | Samsung32 | 38 kHz | 32 | address, command | Symmetric 4.5 ms leader; address sent twice. |
 | JVC | 38 kHz | 16 | address, command | Long 8.4 ms leader, no checksum. |
 | Kaseikyo / Panasonic | 37 kHz | 48 | vendor, genre, address, command | Vendor `0x2002` is Panasonic. Has a real checksum. |

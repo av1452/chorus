@@ -203,7 +203,17 @@ class NEC(Protocol):
 
 
 class NECExtended(Protocol):
-    """NEC extended: a 16-bit address, so no address checksum."""
+    """NEC extended: a 16-bit address AND a 16-bit command, no checksum.
+
+    This is the convention Flipper Zero calls "NECext" -- distinct from
+    protocols that keep plain NEC's 8-bit command-plus-complement checksum
+    but widen only the address. Apple's own remotes use exactly this: real
+    captures (Apple TV 4K, 3rd/4th gen) show a 16-bit command whose two
+    bytes are never complementary, confirming there is no checksum to
+    validate. Because nothing here is self-verifying, this decoder is a
+    last resort: it accepts any 32-bit, NEC-leader-timed frame that plain
+    NEC declined, so it must stay positioned after NEC in ``PROTOCOLS``.
+    """
 
     name = "NECext"
     carrier = 38000
@@ -214,13 +224,13 @@ class NECExtended(Protocol):
     def encode(self, *, address: int = 0, command: int = 0, **_: int) -> IRSignal:
         if not 0 <= address <= 0xFFFF:
             raise IRError(f"NECext address must be 0-65535, got {address}")
-        if not 0 <= command <= 0xFF:
-            raise IRError(f"NECext command must be 0-255, got {command}")
+        if not 0 <= command <= 0xFFFF:
+            raise IRError(f"NECext command must be 0-65535, got {command}")
         payload = [
             address & 0xFF,
             (address >> 8) & 0xFF,
-            command,
-            (~command) & 0xFF,
+            command & 0xFF,
+            (command >> 8) & 0xFF,
         ]
         bits = self._frame._bytes_to_bits(payload)
         return self._frame._bits_to_signal(bits)
@@ -231,13 +241,14 @@ class NECExtended(Protocol):
         bits = self._frame._decode_bits(signal)
         if bits is None:
             return None
-        lo, hi, c, nc = self._frame._bits_to_bytes(bits)
-        if (c ^ nc) != 0xFF:
-            return None
-        if (lo ^ hi) == 0xFF:
-            return None  # plain NEC owns this
+        addr_lo, addr_hi, cmd_lo, cmd_hi = self._frame._bits_to_bytes(bits)
         return IRCommand(
-            self.name, {"address": lo | (hi << 8), "command": c}, tuple(bits)
+            self.name,
+            {
+                "address": addr_lo | (addr_hi << 8),
+                "command": cmd_lo | (cmd_hi << 8),
+            },
+            tuple(bits),
         )
 
 

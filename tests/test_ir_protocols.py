@@ -26,24 +26,31 @@ def test_nec_carries_its_checksum():
     assert abs(signal.durations[1] - 4500) < 1
 
 
-@pytest.mark.parametrize("address", [0, 0x1234, 0xFFFF])
-@pytest.mark.parametrize("command", [0, 0x56, 0xFF])
+@pytest.mark.parametrize("address", [0, 0x1234, 0xFFFF, 0x87E5])
+@pytest.mark.parametrize("command", [0, 0x56, 0xFF, 0x8C5C, 0xFFFF])
 def test_necext_round_trip(address, command):
+    # Both fields are a full 16 bits with no checksum -- this is the
+    # convention real Apple TV remotes use (address 0x87E5, commands like
+    # 0x8C5C), confirmed by none of their captured codes ever showing a
+    # complementary byte pair.
     signal = protocols.encode("NECext", address=address, command=command)
     decoded = protocols.identify(signal)
     assert decoded is not None
-    assert decoded.fields["command"] == command
-    # Plain NEC owns addresses whose halves are complementary.
-    if (address & 0xFF) ^ ((address >> 8) & 0xFF) != 0xFF:
-        assert decoded.protocol == "NECext"
-        assert decoded.fields["address"] == address
+    assert decoded.protocol == "NECext"
+    assert decoded.fields == {"address": address, "command": command}
 
 
-def test_nec_and_necext_do_not_collide():
-    # An address of 0x04 encodes as 04 FB in NEC, which NECext must decline.
+def test_nec_is_tried_before_necext():
+    # NECext has no checksum, so on its own it cannot tell a genuine NEC
+    # frame apart from one of its own -- it will decode anything NEC-shaped.
+    # The real guarantee users depend on is that identify() still names a
+    # properly-checksummed NEC frame "NEC", which holds only because NEC is
+    # tried first in PROTOCOLS.
     nec = protocols.encode("NEC", address=0x04, command=0x0C)
-    assert protocols.NECExtended().decode(nec) is None
-    assert protocols.NEC().decode(nec) is not None
+    assert protocols.NECExtended().decode(nec) is not None  # it has no way to decline
+    assert protocols.identify(nec).protocol == "NEC"  # but ordering saves us
+    kinds = [type(p) for p in protocols.PROTOCOLS]
+    assert kinds.index(protocols.NEC) < kinds.index(protocols.NECExtended)
 
 
 @pytest.mark.parametrize("bits", [12, 15, 20])
