@@ -7,8 +7,10 @@
 - **Hardware confirmed** — someone has run it against the physical remote and
   reported the result.
 
-Nothing is hardware-confirmed yet. If you own one of these, running
-`harmonyforge identify` and
+Only the Harmony 665's read path (identify, backup, and the binary container
+parser) is hardware-confirmed so far — see `docs/binary-config-format.md`.
+Nothing's write path has been confirmed on any model. If you own one of
+these, running `harmonyforge identify` and
 [opening an issue](https://github.com/av1452/harmonyforge/issues) with the
 output is the most valuable contribution available right now — whether it
 works or not.
@@ -30,7 +32,6 @@ works or not.
 | Harmony 688 | 10 | 7 | yes | — |
 | Harmony 600 | 71 | 7 | yes | — |
 | Harmony 650 | 72 | 7 | yes | — |
-| Harmony 665 | 75 | 7 | yes | — |
 | Harmony 880 / 880 Pro | 15 / 39 | 8 | yes | — |
 | Harmony 885 | 17 | 8 | yes | — |
 | Harmony 520 / 522 / 525 | 18 / 46 / 22 | 9 | yes | — |
@@ -38,6 +39,7 @@ works or not.
 | Harmony 515 | 67 | 9 | yes | — |
 | Harmony XBOX 360 | 36 | 9 | yes | — |
 | Harmony One | 54 | 12 | yes | — |
+| Harmony 665 | 75 | 14 | yes | **read path: yes** |
 | Harmony 700 | 66 | 14 | yes | — |
 | Harmony 720 | 44 | 7 | yes | — |
 | Harmony 785 | 45 | 7 | yes | — |

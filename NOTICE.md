@@ -61,6 +61,31 @@ The IR protocol timings in `ir/protocols.py` come from published
 specifications for NEC, Philips RC-5, Sony SIRC, Panasonic/Kaseikyo, Samsung
 and JVC.
 
+## harmony-decompiler
+
+`config/binary.py` -- the parser for the structure *inside* a config blob,
+as opposed to everything else in this project, which (via libconcord) only
+ever moves that blob without looking inside it -- is derived from findings
+published by the
+[**harmony-decompiler**](https://github.com/trelowney/harmony-decompiler)
+project (GPLv3), principally `docs/FORMAT.md` in that repository: the
+container header shape, the per-architecture cookie/marker constants, the
+section pointer table, and the confirmation that this container is shared
+across architectures 8, 9, 12 and 14.
+
+Credit for architectures 12 and 14 specifically belongs to **@dannybloe**,
+who established the shared-container finding across those architectures
+over a thirteen-sample corpus (harmony-decompiler issue #66); the
+architecture-9 depth that makes the overall format legible at all is
+**@trelowney**'s and **@glenharris**'s.
+
+This port independently re-confirmed the architecture-14 constants against
+a real Harmony 665 backup before relying on them -- see
+`docs/binary-config-format.md` for exactly what was cross-checked. No code
+was copied from harmony-decompiler; `config/binary.py` is a clean
+reimplementation of the documented findings, licensed GPL-3.0-or-later to
+match.
+
 ## Trademarks
 
 "Logitech" and "Harmony" are trademarks of Logitech International S.A.

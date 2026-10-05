@@ -6,11 +6,53 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- `config/binary.py`: a parser for the config blob's internal container --
+  header, cookie/magic, end-of-config address, and the section pointer
+  table -- for architectures 8, 9, 12 and 14. Derived from the
+  [harmony-decompiler](https://github.com/trelowney/harmony-decompiler)
+  project's findings (see NOTICE.md), independently re-verified against a
+  real Harmony 665 backup before relying on it: the cookie, computed
+  `config_base`, and section 1's architecture/version record all matched
+  values obtained through completely separate means (libconcord's
+  architecture table, and a live USB identity read). Does not decode
+  section contents, and writes nothing to a remote. See
+  `docs/binary-config-format.md`.
+- `harmonyforge inspect-binary`: CLI command exposing the above against a
+  file saved by `backup`.
+- 31 new tests against synthetic container blobs (20 for the parser's
+  correctness and error paths, covering every architecture signature).
+
+### Fixed
+
+- `NECext` assumed an 8-bit command with a complement checksum. Real Apple
+  TV remotes (2nd-gen 4K, 3rd-gen, checked independently) use a full 16-bit
+  command with no checksum at all -- confirmed by checking every captured
+  command byte pair across two device generations for the complement
+  relationship a real checksum would show, and finding none. Re-verified
+  with a 50,000-sample random sweep after the fix.
+- `IRSignal.snapped()` picked the first common carrier frequency within
+  tolerance rather than the nearest, so a learned 37904 Hz capture snapped
+  to 36 kHz instead of 38 kHz.
+- `HARDWARE.md` listed the Harmony 665 at architecture 7, by incorrect
+  analogy to the 650. A live identity read against real hardware showed it
+  is architecture 14 (the 700/One family), not 7.
+
+### Changed
+
+- The read path (`detect`, `identify`, `backup`) is now verified against a
+  real Harmony 665, not only against the simulated remote. The write path
+  remains unverified on any model.
+
 ### Known limitations
 
-- No path yet from a `RemoteConfig` to the remote's native binary format;
-  `backup`/`restore` move opaque blobs. See [docs/roadmap.md](docs/roadmap.md).
-- No code path has been verified against physical hardware.
+- No path yet from a `RemoteConfig` to the remote's native binary format.
+  The blob's outer container is now understood (see Added, above); what is
+  inside each section is not, for any architecture these remotes use. See
+  [docs/roadmap.md](docs/roadmap.md).
+- The write path has not been verified against physical hardware, on any
+  model.
 - The usbnet family (890, 900, 1100) is detected but not programmable.
 
 ## [0.1.0] — 2026-10-04

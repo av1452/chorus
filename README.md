@@ -38,29 +38,39 @@ harmonyforge serve                    # opens the editor in your browser
 This matters more than a feature list, so read it before trusting the tool
 with your remote.
 
-**Verified in this repository, by an automated test suite of 262 tests:**
+**Verified in this repository, by an automated test suite of 293 tests:**
 the wire format of every protocol command; the model, architecture and flash
 tables; IR encode/decode round-trips across more than 20,000 parameter
 combinations; Pronto conversion; LIRC and Flipper import; the configuration
 model; the WebSocket client; and full erase/write/read/verify cycles against
 a simulated remote.
 
-**Not yet verified against physical hardware.** I do not have a Harmony
-remote to test against. The USB protocol implementation is a careful port of
+**The read path is now verified against real hardware**: `detect`, `identify`
+and `backup` have run successfully against a physical Harmony 665
+(architecture 14) — correct model/firmware/architecture identification, and
+a full, correctly-sized configuration read off its flash. The USB protocol
+implementation is a careful port of
 [libconcord](https://github.com/jaymzh/concordance), which has driven real
-remotes for fifteen years, and the packet bytes are asserted against the
-documented format — but ported code is not tested code.
+remotes for fifteen years; this is the first independent confirmation that
+the port itself is correct, not just the format it's based on.
 
-So: **`identify`, `detect` and `backup` are safe to try** — they only read.
-Treat `restore` and anything that writes to flash as unproven until someone
-confirms it on your model. If you try it, please
-[open an issue](https://github.com/av1452/harmonyforge/issues) either way;
-hardware reports are the single most useful contribution right now.
+**The write path (`restore`) is still unverified on real hardware.** Nobody
+has confirmed it writes correctly on any model yet. Treat it as unproven
+until someone does. If you try it, please
+[open an issue](https://github.com/av1452/harmonyforge/issues) either way —
+hardware reports (both working and broken) are the single most useful
+contribution right now, for the write path and for every architecture
+besides 14.
 
 The one thing harmonyforge **cannot** do yet is compile a `RemoteConfig` into
-the remote's native binary config format. That format is undocumented and
-model-specific. See [docs/roadmap.md](docs/roadmap.md) for what that means in
-practice and how it is being approached.
+the remote's native binary config format. The outer container of that
+format is now understood and parseable (`config/binary.py`, independently
+re-verified against a real architecture-14 backup — see
+[docs/binary-config-format.md](docs/binary-config-format.md)), credit to
+the [harmony-decompiler](https://github.com/trelowney/harmony-decompiler)
+project. What is inside each section — the actual device/activity/button
+data — is still unmapped for the architectures these remotes use. See
+[docs/roadmap.md](docs/roadmap.md) for exactly where that boundary sits.
 
 ## Which remote do you have?
 
@@ -237,6 +247,7 @@ hunting for in a code database.
 - [docs/config-format.md](docs/config-format.md) — the configuration file schema
 - [docs/ir-codes.md](docs/ir-codes.md) — IR protocols, Pronto, and where to find codes
 - [docs/hub-api.md](docs/hub-api.md) — the Harmony Hub local API
+- [docs/binary-config-format.md](docs/binary-config-format.md) — what's known about the config's internal binary structure
 - [docs/architecture.md](docs/architecture.md) — how the code is laid out
 - [docs/roadmap.md](docs/roadmap.md) — what is missing and what is next
 - [HARDWARE.md](HARDWARE.md) — per-model support matrix

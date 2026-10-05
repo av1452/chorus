@@ -19,7 +19,8 @@ src/harmonyforge/
 │   ├── flipper.py       Flipper Zero .ir import and export
 │   └── database.py      On-disk code library
 ├── config/
-│   └── model.py         Devices, activities, buttons, macros; validation
+│   ├── model.py         Devices, activities, buttons, macros; validation
+│   └── binary.py        Config blob's internal container (header, sections)
 ├── hub/
 │   ├── discovery.py     SSDP
 │   ├── websocket.py     Minimal RFC 6455 client (stdlib only)
@@ -98,7 +99,7 @@ someone with less context than the code had.
 ## Testing
 
 ```bash
-pytest                      # 262 tests, no hardware needed
+pytest                      # 293 tests, no hardware needed
 pytest --cov=harmonyforge
 ruff check src tests
 ```
@@ -122,8 +123,15 @@ What is covered:
   warning.
 - **Flash operations** — full erase/write/read/verify against the simulator,
   parameterised across every write-block size and the chunk boundary.
+- **Binary container** — header parsing, section table, every corruption
+  path, against synthetic blobs built to the documented shape for every
+  known architecture signature.
 - **WebSocket** — handshake, masking, fragment reassembly, extended lengths,
   automatic pong, close, and refusal handling, all against a scripted server.
 - **CLI** — every subcommand's exit code and error text.
 
-What is **not** covered: real hardware. See the status section in the README.
+What the automated suite does not cover: writing to real hardware (still
+unproven, see the README). Reading has been exercised against a real
+Harmony 665 — identity, backup, and the binary container parser all ran
+successfully against actual flash contents during development, independent
+of the unit tests above.

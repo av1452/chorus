@@ -25,46 +25,64 @@ cannot yet push a *newly designed* configuration onto a USB remote.
 
 ### Why this is hard
 
-The binary format is undocumented, and nobody has fully reverse-engineered
-it. libconcord — which has driven these remotes for fifteen years — has the
-same gap: it moves config blobs between the cloud and the device, and
-deliberately treats them as opaque. It never needed to generate one, because
-Logitech's servers did that.
+It is not undocumented from zero anymore, which is worth being precise
+about. The outer container — a header with a cookie/magic, an
+end-of-config address, and a table of absolute flash addresses pointing at
+~18 contiguous sections — is reverse-engineered and confirmed shared
+across architectures 8, 9, 12 and 14 by the
+[harmony-decompiler](https://github.com/trelowney/harmony-decompiler)
+project. harmonyforge implements that container layer
+(`config/binary.py`), independently re-verified against a real
+architecture-14 backup — see `docs/binary-config-format.md`.
 
-The format is also not one format. It varies by architecture and by firmware
-revision, and it contains internal offset tables that have to be
-self-consistent. A blob that is structurally wrong does not fail cleanly; it
-produces a remote that behaves erratically.
+What remains genuinely unmapped is the **contents** of those sections for
+architecture 12 and 14: the device table, the activity table, and the
+button-to-matrix mapping. harmony-decompiler has done that depth of work
+for architecture 9 (over 99% of a 525 config decodes); nobody has done it
+for 12 or 14 yet. That is real, substantial reverse-engineering work, not
+a thin remaining gap.
+
+One hard-won finding changes how that work has to proceed:
+**naive diffing between two config dumps does not work.** A config is a
+compiled image full of absolute pointers, so any length-changing edit
+reshuffles everything after it — two dumps differing by one small change
+can disagree in 70-85% of their bytes, with the first difference always
+landing on the end-of-config address itself. Collecting "before and after"
+pairs, which is what this document used to recommend, does not shortcut
+the problem the way it seems like it should.
 
 ### How to get there
 
 In rough order of effort and payoff:
 
-1. **Collect blobs.** The format becomes tractable with a corpus: several
-   backups from the same model with known, deliberately-varied configurations
-   (add one device; rename an activity; change one button). Diffing those
-   isolates fields fast. This is the single most useful contribution anyone
-   with a remote can make, and it needs no reverse-engineering skill — just
-   `backup`, a change made with any still-working tool, and `backup` again.
+1. **Contribute real samples.** Not pairs — single backups, from different
+   physical remotes on architecture 12 or 14 (the 665, the 700, the One).
+   This is how harmony-decompiler established the 650/890 shared structure:
+   comparing dumps from different contributors, not before/after diffing
+   one person's remote. `harmonyforge backup` plus the `.json` sidecar is
+   enough; no change needs to be made to the remote first.
 
-2. **Map the header.** The cookie and end-vector are already known from the
-   architecture table. The region immediately after almost certainly holds
-   counts and offsets for the device and activity tables.
+2. **Map section contents**, following harmony-decompiler's own method on
+   architecture 9 as the template: decompile to a structured
+   representation, cross-validate against something independently
+   checkable (they rendered the remote's own menu screens as bitmaps
+   offline to confirm their decode), and require recompiling to produce
+   byte-identical output before trusting any of it.
 
-3. **Map the IR code table.** Probably the easiest large structure to find,
-   because we can generate a config containing one known IR code and search
-   the blob for its timings.
+3. **Solve the button-matrix mapping separately.** Even a fully-decoded
+   config stores buttons as keyboard-matrix coordinates in Logitech's
+   internal ordering, not the remote's visual layout — this is unsolved
+   even on the one architecture that is otherwise fully mapped, and needs
+   its own evidence (hardware schematics, or systematic probing).
 
-4. **Write a compiler per architecture**, starting with architecture 7 (the
-   600/650/665 family) as the most common.
+4. **Round-trip test.** Decompile a real blob, recompile it, and require
+   the bytes to match exactly. Until that passes for architecture 14,
+   writing a generated config to a 665 or 700 is not safe at any step.
 
-5. **Round-trip test**: decompile a real blob, recompile it, and require the
-   bytes to match. Until that passes for a given model, writing a generated
-   config to that model is not safe.
-
-If you have a Harmony remote and are willing to help with step 1, please
-[open an issue](https://github.com/av1452/harmonyforge/issues) — that is the
-critical path.
+If you have a 665, 700, or One and are willing to contribute a backup,
+please [open an issue](https://github.com/av1452/harmonyforge/issues) or
+send it to harmony-decompiler directly — either is the critical path right
+now.
 
 ## Other planned work
 

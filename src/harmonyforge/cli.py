@@ -280,6 +280,78 @@ def cmd_read_flash(args, printer: Printer) -> int:
         remote.transport.close()
 
 
+def cmd_inspect_binary(args, printer: Printer) -> int:
+    """Parse a backup's container structure (header and section table).
+
+    This does not need the remote attached -- it works on a file already
+    saved by `backup`. It only decodes the outer container; the content of
+    each section is unmapped for most architectures. See
+    docs/binary-config-format.md for exactly what is and is not known.
+    """
+    from . import devicedb
+    from .config.binary import BinaryFormatError, parse_container
+
+    source = Path(args.path)
+    if not source.exists():
+        printer.fail(f"no such file: {source}")
+        return 1
+    blob = source.read_bytes()
+
+    architecture = args.architecture
+    if architecture is None:
+        meta_path = source.with_suffix(source.suffix + ".json")
+        if meta_path.exists():
+            try:
+                meta = json.loads(meta_path.read_text())
+                architecture = meta.get("architecture")
+            except json.JSONDecodeError:
+                pass
+    if architecture is None:
+        printer.fail(
+            "no --architecture given, and no <file>.json sidecar to read it "
+            "from. Pass it explicitly, e.g. --architecture 14."
+        )
+        return 2
+
+    arch = devicedb.architecture(architecture)
+    if arch is None:
+        printer.fail(f"unknown architecture {architecture}")
+        return 1
+
+    try:
+        header = parse_container(blob, architecture=architecture, config_base=arch.config_base)
+    except BinaryFormatError as exc:
+        printer.fail(str(exc))
+        return 1
+
+    printer.heading(f"Container (architecture {architecture})")
+    printer.say(f"cookie:        {header.cookie!r}")
+    printer.say(f"end_address:   0x{header.end_address:06X}")
+    printer.say(f"unknown_field: 0x{header.unknown_field:X}")
+    printer.say(f"config_base:   0x{header.config_base:06X}")
+    printer.say()
+    printer.say(f"{len(header.sections)} slots:")
+    for section in header.sections:
+        if not section.is_present:
+            printer.say(f"  {section.index:2}: (absent)")
+        elif section.length is not None:
+            printer.say(
+                f"  {section.index:2}: offset=0x{section.file_offset:06X} "
+                f"length={section.length:,}"
+            )
+        else:
+            printer.say(
+                f"  {section.index:2}: offset=0x{section.file_offset:06X} "
+                "length=(runs to end of blob)"
+            )
+    printer.say()
+    printer.say(
+        "This is the container only -- what each section actually contains "
+        "is not decoded. See docs/binary-config-format.md."
+    )
+    return 0
+
+
 def _hexdump(data: bytes, base: int, printer: Printer) -> None:
     for offset in range(0, len(data), 16):
         chunk = data[offset : offset + 16]
@@ -764,6 +836,18 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("length", help="byte count, e.g. 1024")
     p.add_argument("-o", "--output", help="write to a file instead of stdout")
     p.set_defaults(func=cmd_read_flash)
+
+    p = sub.add_parser(
+        "inspect-binary",
+        help="parse a backup's container structure (header, section table)",
+    )
+    p.add_argument("path", help="a file previously written by `backup`")
+    p.add_argument(
+        "--architecture",
+        type=int,
+        help="override the architecture (default: read from the .json sidecar)",
+    )
+    p.set_defaults(func=cmd_inspect_binary)
 
     p = sub.add_parser("remotes", help="list known remote models")
     p.add_argument("-s", "--search", help="filter by name")
