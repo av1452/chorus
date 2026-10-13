@@ -24,7 +24,18 @@
       <button data-tab="backup">Backup</button>
     </nav>
   </header>
-  <main id="view" tabindex="-1"></main>
+  <main id="view" tabindex="-1">
+    <div class="card" id="load-help" hidden>
+      <h2>Chorus didn’t start</h2>
+      <p>Browsers won’t run this app from a file opened directly on your computer. Either use the online version at
+        <a href="https://av1452.github.io/chorus-remote/">av1452.github.io/chorus-remote</a>, or start it with
+        <code>start.cmd</code> (Windows) or <code>node serve.mjs</code> and open <code>http://localhost:8080</code>.</p>
+    </div>
+  </main>
+  <script>
+    // Shown only if the app's code fails to load (most often when opened as a file:// page).
+    setTimeout(function () { var h = document.getElementById('load-help'); if (h) h.hidden = false; }, 1500);
+  </script>
   <div id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="src/app.js"></script>
 </body>

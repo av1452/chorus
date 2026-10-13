@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test \"test/*.test.js\"",
-    "start": "npx --yes http-server@14.1.1 -c-1 -p 8080 ."
+    "start": "node serve.mjs"
   },
   "license": "MIT"
 }
