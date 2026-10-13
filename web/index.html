@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chorus Remote Setup</title>
+  <meta name="description" content="Set up activities, devices and buttons for your universal remote, and read USB remotes over WebHID.">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icons/icon.svg" alt="" width="28" height="28">
+      <span>Chorus</span>
+    </div>
+    <nav class="tabs" aria-label="Sections">
+      <button data-tab="activities" aria-current="page">Activities</button>
+      <button data-tab="devices">Devices</button>
+      <button data-tab="buttons">Buttons</button>
+      <button data-tab="remote">USB remote</button>
+      <button data-tab="backup">Backup</button>
+    </nav>
+  </header>
+  <main id="view" tabindex="-1">
+    <div class="card" id="load-help" hidden>
+      <h2>Chorus didn’t start</h2>
+      <p>Browsers won’t run this app from a file opened directly on your computer. Either use the online version at
+        <a href="https://av1452.github.io/chorus-remote/">av1452.github.io/chorus-remote</a>, or start it with
+        <code>start.cmd</code> (Windows) or <code>node serve.mjs</code> and open <code>http://localhost:8080</code>.</p>
+    </div>
+  </main>
+  <script>
+    // Shown only if the app's code fails to load (most often when opened as a file:// page).
+    setTimeout(function () { var h = document.getElementById('load-help'); if (h) h.hidden = false; }, 1500);
+  </script>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "Chorus Remote Setup",
+  "short_name": "Chorus",
+  "description": "Set up activities, devices and buttons for your universal remote.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f5",
+  "theme_color": "#1f6f5c",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
