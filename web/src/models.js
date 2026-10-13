@@ -15,8 +15,8 @@ export const REMOTES = [
   { vid: LOGI, pid: 0xc11f, name: '1000-series touch remote', protocol: 'legacy' },
   { vid: LOGI, pid: 0xc120, name: 'Model 51 remote', protocol: 'legacy' },
   { vid: LOGI, pid: 0xc121, name: 'Model 54 remote', protocol: 'legacy' },
-  // Shared by model 66 (legacy) and model 96 (packet); Chorus tries the packet protocol.
-  { vid: LOGI, pid: 0xc122, name: 'Model 66 / 96 remote', protocol: 'mixed' },
+  // Shared by the Harmony 665 and model 66 (older protocol, confirmed on a 665) and model 96 (packet).
+  { vid: LOGI, pid: 0xc122, name: 'Harmony 665 / model 66 / 96', protocol: 'mixed' },
   { vid: LOGI, pid: 0xc124, name: 'Model 78 / 104 remote', protocol: 'packet' },
   { vid: LOGI, pid: 0xc125, name: 'Model 80 / 103 remote', protocol: 'packet' },
   { vid: LOGI, pid: 0xc126, name: 'Model 82 remote', protocol: 'packet' },

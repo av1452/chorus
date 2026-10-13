@@ -86,7 +86,9 @@ class DeviceInfo:
         return self.vendor_id == LOGITECH_VID and self.product_id == USBNET_PID
 
     def __str__(self) -> str:
-        label = " ".join(x for x in (self.manufacturer, self.product) if x)
+        # hidapi on Windows often reports the same string for both.
+        parts = [self.manufacturer] if self.product == self.manufacturer else [self.manufacturer, self.product]
+        label = " ".join(x for x in parts if x)
         return f"{label or 'Harmony remote'} [{self.vendor_id:04x}:{self.product_id:04x}]"
 
 

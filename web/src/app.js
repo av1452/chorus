@@ -222,6 +222,7 @@ function remoteView() {
             : '<button class="btn primary" data-act="usb-connect">Connect remote</button>'}
       </div>
       ${info?.protocol === 'legacy' ? `<p class="small">This model uses the older USB protocol, which the browser app can’t read yet. Use the harmonyforge command-line tool instead: <code>harmonyforge identify</code>. See <a href="${REPO_URL}#installing">installing harmonyforge</a>.</p>` : ''}
+      ${info?.protocol === 'mixed' ? `<p class="small">This USB ID is shared by newer and older models. If reading fails, it's probably a Harmony 665 or similar older remote: use <code>harmonyforge identify</code> from the <a href="${REPO_URL}#installing">command-line tool</a> instead.</p>` : ''}
       ${usb.progress ? `<progress value="${usb.progress[0]}" max="${usb.progress[1]}"></progress>` : ''}
       ${usb.error ? `<p class="small" style="color:var(--danger)">${esc(usb.error)}</p>` : ''}
     </div>
