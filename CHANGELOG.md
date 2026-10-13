@@ -33,6 +33,10 @@ All notable changes to this project are documented here. Format follows
 
 ### Fixed
 
+- `detect`, `identify` and other USB commands crashed with
+  `usb.core.NoBackendError` when libusb was not installed (the default on
+  Windows). They now explain how to install libusb on each platform, and
+  `detect` falls back to hidapi when it is installed.
 - `NECext` assumed an 8-bit command with a complement checksum. Real Apple
   TV remotes (2nd-gen 4K, 3rd-gen, checked independently) use a full 16-bit
   command with no checksum at all -- confirmed by checking every captured

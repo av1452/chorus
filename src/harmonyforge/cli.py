@@ -101,9 +101,9 @@ def _open(args, printer: Printer):
 
 def cmd_detect(args, printer: Printer) -> int:
     """List attached remotes without claiming them."""
-    from .usb.transport import PyUsbTransport
+    from .usb.transport import enumerate_remotes
 
-    devices = PyUsbTransport.enumerate()
+    devices = enumerate_remotes()
     if not devices:
         printer.fail("No Harmony remote found on USB.")
         printer.say()

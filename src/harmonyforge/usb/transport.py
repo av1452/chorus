@@ -24,9 +24,28 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-from ..errors import RemoteNotFoundError, TransportError, TransportTimeout
+from ..errors import (
+    RemoteNotFoundError,
+    TransportError,
+    TransportTimeout,
+    UsbBackendMissing,
+)
 
 log = logging.getLogger(__name__)
+
+#: Shown when pyusb is installed but libusb itself cannot be loaded.
+LIBUSB_MISSING = (
+    "pyusb could not find libusb, so harmonyforge cannot talk to USB devices.\n"
+    "  Windows: install the hidapi fallback with `pip install hidapi`, or install\n"
+    "           a libusb driver for the remote with Zadig (https://zadig.akeo.ie).\n"
+    "  macOS:   brew install libusb\n"
+    "  Linux:   sudo apt install libusb-1.0-0   (or your distro's equivalent)"
+)
+
+
+def _no_backend_error(usb_core) -> type[Exception]:
+    # Older pyusb releases lack NoBackendError; match nothing in that case.
+    return getattr(usb_core, "NoBackendError", ())
 
 #: Logitech's vendor ID.
 LOGITECH_VID = 0x046D
@@ -128,9 +147,12 @@ class PyUsbTransport(Transport):
 
     @staticmethod
     def _find(usb_core):
-        dev = usb_core.find(
-            custom_match=lambda d: is_harmony(d.idVendor, d.idProduct)
-        )
+        try:
+            dev = usb_core.find(
+                custom_match=lambda d: is_harmony(d.idVendor, d.idProduct)
+            )
+        except _no_backend_error(usb_core) as exc:
+            raise UsbBackendMissing(LIBUSB_MISSING) from exc
         if dev is None:
             raise RemoteNotFoundError(
                 "No Harmony remote found on USB. Plug the remote in with its "
@@ -147,10 +169,15 @@ class PyUsbTransport(Transport):
         except ImportError as exc:  # pragma: no cover
             raise TransportError("pyusb is not installed") from exc
 
+        try:
+            devices = list(usb.core.find(
+                find_all=True, custom_match=lambda d: is_harmony(d.idVendor, d.idProduct)
+            ))
+        except _no_backend_error(usb.core) as exc:
+            raise UsbBackendMissing(LIBUSB_MISSING) from exc
+
         found = []
-        for dev in usb.core.find(
-            find_all=True, custom_match=lambda d: is_harmony(d.idVendor, d.idProduct)
-        ):
+        for dev in devices:
             info = DeviceInfo(dev.idVendor, dev.idProduct, version=dev.bcdDevice or 0)
             for attr, target in (("manufacturer", "manufacturer"), ("product", "product")):
                 try:
@@ -301,6 +328,29 @@ class HidApiTransport(Transport):
             manufacturer=target.get("manufacturer_string") or "",
             product=target.get("product_string") or "",
         )
+
+    @staticmethod
+    def enumerate() -> list[DeviceInfo]:
+        """List every attached Harmony remote that hidapi can see."""
+        try:
+            import hid
+        except ImportError as exc:
+            raise TransportError("hidapi is not installed") from exc
+
+        found, seen = [], set()
+        for entry in hid.enumerate():
+            vid, pid = entry["vendor_id"], entry["product_id"]
+            # hidapi lists one entry per HID collection; report each device once.
+            if not is_harmony(vid, pid) or (vid, pid) in seen:
+                continue
+            seen.add((vid, pid))
+            found.append(DeviceInfo(
+                vid, pid,
+                manufacturer=entry.get("manufacturer_string") or "",
+                product=entry.get("product_string") or "",
+                version=entry.get("release_number") or 0,
+            ))
+        return found
 
     def write(self, data: bytes) -> None:
         # hidapi prepends a report ID byte; these devices use report ID 0.
@@ -454,4 +504,28 @@ def open_remote(backend: str = "auto") -> Transport:
         raise
     except Exception as exc:
         log.debug("pyusb backend unavailable (%s); trying hidapi", exc)
+        if not _hidapi_installed():
+            # Report the libusb problem, not the missing optional fallback.
+            if isinstance(exc, UsbBackendMissing):
+                raise
+            raise UsbBackendMissing(LIBUSB_MISSING) from exc
         return HidApiTransport()
+
+
+def enumerate_remotes() -> list[DeviceInfo]:
+    """List attached remotes via libusb, falling back to hidapi when libusb is missing."""
+    try:
+        return PyUsbTransport.enumerate()
+    except UsbBackendMissing:
+        if not _hidapi_installed():
+            raise
+        log.debug("libusb unavailable; enumerating with hidapi")
+        return HidApiTransport.enumerate()
+
+
+def _hidapi_installed() -> bool:
+    try:
+        import hid  # noqa: F401
+    except ImportError:
+        return False
+    return True

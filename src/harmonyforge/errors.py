@@ -19,6 +19,10 @@ class TransportTimeout(TransportError):
     """The remote did not answer within the timeout."""
 
 
+class UsbBackendMissing(TransportError):
+    """pyusb is installed but cannot find libusb, and no hidapi fallback is available."""
+
+
 class ProtocolError(HarmonyForgeError):
     """The remote sent something we could not make sense of."""
 
