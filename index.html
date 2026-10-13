@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chorus Remote Setup</title>
+  <meta name="description" content="Set up activities, devices and buttons for your universal remote, and read USB remotes over WebHID.">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icons/icon.svg" alt="" width="28" height="28">
+      <span>Chorus</span>
+    </div>
+    <nav class="tabs" aria-label="Sections">
+      <button data-tab="activities" aria-current="page">Activities</button>
+      <button data-tab="devices">Devices</button>
+      <button data-tab="buttons">Buttons</button>
+      <button data-tab="remote">USB remote</button>
+      <button data-tab="backup">Backup</button>
+    </nav>
+  </header>
+  <main id="view" tabindex="-1"></main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
