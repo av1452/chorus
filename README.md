@@ -18,6 +18,11 @@ harmonyforge backup my-remote.bin     # do this first, always
 harmonyforge serve                    # opens the editor in your browser
 ```
 
+**Prefer not to install anything?** The web app runs in your browser:
+**https://av1452.github.io/harmonyforge/** — set up devices, activities and
+buttons, and read newer remotes and hubs over USB (Chrome or Edge). See
+[web/README.md](web/README.md).
+
 ---
 
 ## What it does
@@ -82,9 +87,10 @@ flash and were programmed by plugging into USB. This is harmonyforge's main
 target.
 
 **Hub-based remotes** — Hub, Elite, Companion, Ultimate, Smart Control. The
-configuration lives on the hub and the remote is effectively a radio. These
-never appear on USB; use the `hub` commands, which work over your network
-without any cloud account.
+configuration lives on the hub and the remote is effectively a radio. Use the
+`hub` commands, which work over your network without any cloud account. Newer
+hubs and touch remotes also have a USB setup interface with a different
+protocol; the [web app](web/README.md) can identify those over USB.
 
 Not sure? Plug it in and run `harmonyforge detect`. If nothing shows up, try
 `harmonyforge hub discover`. See [HARDWARE.md](HARDWARE.md) for the
@@ -244,6 +250,8 @@ hunting for in a code database.
 
 - [docs/getting-started.md](docs/getting-started.md) — a fuller walkthrough
 - [docs/protocol-usb-hid.md](docs/protocol-usb-hid.md) — the USB wire protocol, documented
+- [docs/protocol-packet-hid.md](docs/protocol-packet-hid.md) — the newer remotes' packet protocol, used by the web app
+- [web/README.md](web/README.md) — the browser app: using it, running it locally, troubleshooting
 - [docs/config-format.md](docs/config-format.md) — the configuration file schema
 - [docs/ir-codes.md](docs/ir-codes.md) — IR protocols, Pronto, and where to find codes
 - [docs/hub-api.md](docs/hub-api.md) — the Harmony Hub local API

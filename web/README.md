@@ -1,10 +1,9 @@
-# Chorus
+# Chorus (harmonyforge web app)
 
-A browser app for setting up universal remotes. It's an independent, open-source take on the
-discontinued desktop setup software for USB universal remotes, and it runs entirely in your
-browser with nothing to install.
+The in-browser part of [harmonyforge](../README.md): set up devices, activities and buttons,
+and read newer remotes and hubs over USB, with nothing to install.
 
-**Use it now:** https://av1452.github.io/chorus-remote/
+**Use it now:** https://av1452.github.io/harmonyforge/
 
 ## What it does
 
@@ -22,10 +21,11 @@ browser with nothing to install.
 - **Write a configuration to the remote.** The original software built the remote's
   configuration on the vendor's servers from their device and IR-code database. Chorus doesn't
   have that database, so syncing a remote isn't possible yet.
-- Talk to older remotes that use the earlier per-model USB protocol (they're marked "not yet"
-  on the USB remote screen).
+- Talk to older USB remotes (650, 665, 700, One, 880 and similar). Those use a different protocol
+  that the [harmonyforge Python tool](../README.md) already supports, including backup and
+  IR learning. They're marked "use Python tool" on the USB remote screen.
 
-See [docs/PROTOCOL.md](docs/PROTOCOL.md) for what is known about the USB protocol and how it was worked out.
+See [docs/protocol-packet-hid.md](../docs/protocol-packet-hid.md) for what is known about the USB protocol and how it was worked out.
 
 ---
 
@@ -33,7 +33,7 @@ See [docs/PROTOCOL.md](docs/PROTOCOL.md) for what is known about the USB protoco
 
 You don't need to download or install anything. Open the link and start using it:
 
-**https://av1452.github.io/chorus-remote/**
+**https://av1452.github.io/harmonyforge/**
 
 ### Which browser?
 
@@ -92,24 +92,24 @@ Only do this if you want to change the code. Otherwise use the link above.
 **With Git:**
 
 ```bash
-git clone https://github.com/av1452/chorus-remote.git
+git clone https://github.com/av1452/harmonyforge.git
 ```
 
 ```bash
-cd chorus-remote
+cd harmonyforge/web
 ```
 
-**Without Git:** on the [repository page](https://github.com/av1452/chorus-remote), click the
+**Without Git:** on the [repository page](https://github.com/av1452/harmonyforge), click the
 green **Code** button → **Download ZIP**. Right-click the ZIP → **Extract All**, then open the
-extracted `chorus-remote-main` folder.
+`web` folder inside the extracted `harmonyforge-main` folder.
 
 ### 3. Start it
 
-**Windows, easiest:** double-click **`start.cmd`** in the project folder. A black window opens
+**Windows, easiest:** double-click **`start.cmd`** in the `web` folder. A black window opens
 and your browser opens the app. Leave the black window open while you use the app; close it
 to stop.
 
-**Any system, from a terminal in the project folder:**
+**Any system, from a terminal in the `web` folder:**
 
 ```bash
 node serve.mjs
@@ -134,7 +134,7 @@ node --test "test/*.test.js"
 |---|---|
 | `'node' is not recognized…` / `command not found: node` | Node.js isn't installed, or the terminal was opened before you installed it. Install it, then open a **new** terminal. |
 | `npm : File …\npm.ps1 cannot be loaded because running scripts is disabled` | That's a PowerShell setting. Use `node serve.mjs` instead of `npm start`, or type `npm.cmd start`. |
-| `Cannot find module …serve.mjs` or `ENOENT … package.json` | The terminal isn't in the project folder. `cd` into the folder that contains `index.html` and try again. |
+| `Cannot find module …serve.mjs` or `ENOENT … package.json` | The terminal isn't in the `web` folder. `cd` into the folder that contains `index.html` and try again. |
 | `Port 8080 is already in use` | Something else is using that port. Run `node serve.mjs 8081` and open http://localhost:8081. |
 | Blank page or "Chorus didn't start" | Make sure the address starts with `http://localhost`, not `file://`. |
 | Old version still showing after an update | Press **Ctrl+Shift+R** to reload without the cache. |
@@ -142,16 +142,16 @@ node --test "test/*.test.js"
 
 ## Deploy your own copy
 
-The included GitHub Actions workflow runs the tests and publishes the app to GitHub Pages on
-every push to `main`. In a fork, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+The `Web app` GitHub Actions workflow (`.github/workflows/web.yml`) runs these tests and
+publishes this folder to GitHub Pages whenever `web/` changes on `main`. In a fork, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
 
 ## Legal
 
-Chorus is not affiliated with or endorsed by Logitech. "Harmony" is a trademark of its owner
+harmonyforge and Chorus are not affiliated with or endorsed by Logitech. "Harmony" is a trademark of its owner
 and is used here only to describe compatibility. This repository contains no code, data files
 or artwork from the original software; protocol details were documented from the publicly
 available application for interoperability.
 
 ## License
 
-MIT
+GPL-3.0-or-later, like the rest of harmonyforge. See [LICENSE](../LICENSE).

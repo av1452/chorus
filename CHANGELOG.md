@@ -8,6 +8,13 @@ All notable changes to this project are documented here. Format follows
 
 ### Added
 
+- `web/`: Chorus, a browser app merged in from the former `chorus-remote`
+  repository (history preserved). Edits devices, activities and per-activity
+  button maps in the browser, reads newer remotes and hubs over WebHID,
+  exports/imports JSON, and works offline as a PWA. Published to GitHub Pages
+  by the new `Web app` workflow.
+- `docs/protocol-packet-hid.md`: the packet protocol used by newer remotes
+  and hubs, documented from static analysis of the MyHarmony client.
 - `config/binary.py`: a parser for the config blob's internal container --
   header, cookie/magic, end-of-config address, and the section pointer
   table -- for architectures 8, 9, 12 and 14. Derived from the

@@ -1,9 +1,15 @@
-# How the original setup app works
+# Newer remotes and hubs: the packet protocol
+
+This covers the USB protocol used by newer remotes and hubs, which the web app in `web/`
+implements. The older remotes use a different protocol, documented in
+[protocol-usb-hid.md](protocol-usb-hid.md) and implemented by the Python tool.
+
+## How the original setup app works
 
 These notes record what was learned by statically inspecting the publicly downloadable
 Windows setup app (version 1.0.1.308) and the web application it loads (client version
 19.1.0.35491). No code, templates or artwork from those files are included in this
-repository; Chorus is an independent implementation of the behaviour described here.
+repository; the web app is an independent implementation of the behaviour described here.
 
 Every statement below is tagged:
 
@@ -76,4 +82,5 @@ The file is text up to the first NUL byte, with one `key value` pair per line
 - The exact framing of `READ` bursts on real hardware. Chorus's parser tolerates both a
   command echo and data packets in the burst; the packet log on the USB remote screen
   shows the raw traffic so this can be checked.
-- The older per-model protocol used by remotes listed as "not yet" in the app.
+- Which of the newer models also accept the older protocol. Older remotes are handled by the
+  Python tool.

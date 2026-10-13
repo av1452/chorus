@@ -92,3 +92,13 @@ match.
 harmonyforge is not affiliated with, endorsed by, or connected to Logitech in
 any way. The names are used solely to identify the hardware this software
 interoperates with.
+
+## Web app (`web/`)
+
+The packet-protocol details used by the web app were documented from static
+analysis of the publicly downloadable MyHarmony client, for
+interoperability (see `docs/protocol-packet-hid.md`). No Logitech code,
+templates, data files or artwork are included; the web app is an
+independent implementation. The web app was originally published as
+`chorus-remote` under the MIT licence and is relicensed GPL-3.0-or-later
+here by its author.

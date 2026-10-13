@@ -8,5 +8,5 @@
     "test": "node --test \"test/*.test.js\"",
     "start": "node serve.mjs"
   },
-  "license": "MIT"
+  "license": "GPL-3.0-or-later"
 }

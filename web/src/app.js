@@ -4,6 +4,8 @@ import { RemoteConnection, webHidSupported } from './usb.js';
 import { REMOTES, hex4 } from './models.js';
 import { toHex } from './protocol.js';
 
+const REPO_URL = 'https://github.com/av1452/harmonyforge';
+
 let config = load();
 const ui = { tab: 'activities', editingDevice: null, editingActivity: null, activityId: null, button: null };
 const usb = { conn: null, log: [], props: null, progress: null, busy: false, error: null };
@@ -187,7 +189,7 @@ function remoteView() {
   const c = usb.conn;
   const info = c?.info;
   const props = usb.props ? Object.entries(usb.props).map(([k, v]) => `<tr><td class="mono">${esc(k)}</td><td class="mono">${esc(v)}</td></tr>`).join('') : '';
-  const supported = REMOTES.map((r) => `<tr><td class="mono">${hex4(r.vid)}:${hex4(r.pid)}</td><td>${esc(r.name)}</td><td><span class="chip ${r.protocol === 'legacy' ? 'warn' : 'ok'}">${r.protocol === 'legacy' ? 'not yet' : r.protocol === 'mixed' ? 'some models' : 'supported'}</span></td></tr>`).join('');
+  const supported = REMOTES.map((r) => `<tr><td class="mono">${hex4(r.vid)}:${hex4(r.pid)}</td><td>${esc(r.name)}</td><td><span class="chip ${r.protocol === 'legacy' ? 'warn' : 'ok'}">${r.protocol === 'legacy' ? 'use Python tool' : r.protocol === 'mixed' ? 'some models' : 'supported'}</span></td></tr>`).join('');
   return `<h1>USB remote</h1>
     <p class="lede">Plug your remote or hub into this computer with a USB cable, then connect to read its model, firmware and serial number.</p>
     <div class="card stack">
@@ -201,7 +203,7 @@ function remoteView() {
                <button class="btn" data-act="usb-disconnect" ${usb.busy ? 'disabled' : ''}>Disconnect</button>`
             : '<button class="btn primary" data-act="usb-connect">Connect remote</button>'}
       </div>
-      ${info?.protocol === 'legacy' ? '<p class="small" style="color:var(--danger)">This model uses an older protocol that Chorus can’t read yet.</p>' : ''}
+      ${info?.protocol === 'legacy' ? `<p class="small">This model uses the older USB protocol, which the browser app can’t read yet. Use the harmonyforge command-line tool instead: <code>harmonyforge identify</code>. See <a href="${REPO_URL}#installing">installing harmonyforge</a>.</p>` : ''}
       ${usb.progress ? `<progress value="${usb.progress[0]}" max="${usb.progress[1]}"></progress>` : ''}
       ${usb.error ? `<p class="small" style="color:var(--danger)">${esc(usb.error)}</p>` : ''}
     </div>
