@@ -12,7 +12,7 @@ directly, keeps your configuration in a plain JSON file you own, and sources
 IR codes from open databases instead of a dead cloud service.
 
 ```
-pip install harmonyforge
+pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
 harmonyforge detect
 harmonyforge backup my-remote.bin     # do this first, always
 harmonyforge serve                    # opens the editor in your browser
@@ -98,20 +98,24 @@ per-model support matrix.
 
 ## Installing
 
-Needs Python 3.10 or newer and libusb.
+Needs Python 3.10 or newer. harmonyforge isn't on PyPI yet, so install it
+straight from GitHub:
 
 ```bash
+# Windows: nothing else to install. The hidapi extra uses Windows' own USB
+# driver, so Zadig isn't needed (confirmed on a Harmony 665).
+pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
+
 # macOS
 brew install libusb
-pip install harmonyforge
+pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
 
 # Debian / Ubuntu
 sudo apt install libusb-1.0-0
-pip install harmonyforge
-
-# Windows: install a libusb driver for the remote with Zadig, then
-pip install harmonyforge
+pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
 ```
+
+If `pip` isn't found on Windows, use `py -m pip` instead.
 
 On Linux, non-root USB access needs a udev rule:
 

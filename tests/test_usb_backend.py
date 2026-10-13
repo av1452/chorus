@@ -63,3 +63,20 @@ def test_open_remote_reports_libusb_not_hidapi(no_libusb, no_hidapi):
 def test_enumerate_without_backend_raises_clear_error(no_libusb):
     with pytest.raises(UsbBackendMissing):
         transport.PyUsbTransport.enumerate()
+
+
+def test_web_editor_status_falls_back_to_hidapi(no_libusb, fake_hidapi):
+    from harmonyforge.server.app import Handler
+
+    # _status doesn't use the request, so it can be called without a live server.
+    status = Handler._status(None)
+    assert status["available"] is True
+    assert [r["product_id"] for r in status["remotes"]] == ["c12b"]
+
+
+def test_web_editor_status_explains_missing_libusb(no_libusb, no_hidapi):
+    from harmonyforge.server.app import Handler
+
+    status = Handler._status(None)
+    assert status["available"] is False
+    assert "libusb" in status["reason"]

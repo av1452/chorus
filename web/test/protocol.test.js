@@ -56,5 +56,7 @@ test('system info is cut at NUL and split into key/value lines', () => {
 test('known remotes are looked up by USB ids', () => {
   assert.equal(lookupRemote(0x046d, 0xc12b).protocol, 'packet');
   assert.equal(lookupRemote(0x046d, 0xc111).protocol, 'legacy');
+  // The Harmony 665 shares this ID and must never get packet-protocol commands.
+  assert.equal(lookupRemote(0x046d, 0xc122).protocol, 'legacy');
   assert.equal(lookupRemote(0x1234, 0x5678), null);
 });

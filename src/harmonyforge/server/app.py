@@ -202,9 +202,9 @@ class Handler(BaseHTTPRequestHandler):
     def _status(self) -> dict:
         """Report whether a remote is attached, without claiming it."""
         try:
-            from ..usb.transport import PyUsbTransport
+            from ..usb.transport import enumerate_remotes
 
-            found = PyUsbTransport.enumerate()
+            found = enumerate_remotes()
         except Exception as exc:
             return {"available": False, "reason": str(exc), "remotes": []}
 

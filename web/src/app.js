@@ -207,7 +207,7 @@ function remoteView() {
   const c = usb.conn;
   const info = c?.info;
   const props = usb.props ? Object.entries(usb.props).map(([k, v]) => `<tr><td class="mono">${esc(k)}</td><td class="mono">${esc(v)}</td></tr>`).join('') : '';
-  const supported = REMOTES.map((r) => `<tr><td class="mono">${hex4(r.vid)}:${hex4(r.pid)}</td><td>${esc(r.name)}</td><td><span class="chip ${r.protocol === 'legacy' ? 'warn' : 'ok'}">${r.protocol === 'legacy' ? 'use Python tool' : r.protocol === 'mixed' ? 'some models' : 'supported'}</span></td></tr>`).join('');
+  const supported = REMOTES.map((r) => `<tr><td class="mono">${hex4(r.vid)}:${hex4(r.pid)}</td><td>${esc(r.name)}</td><td><span class="chip ${r.protocol === 'legacy' ? 'warn' : 'ok'}">${r.protocol === 'legacy' ? 'use Python tool' : 'supported'}</span></td></tr>`).join('');
   return `<h1>USB remote</h1>
     <p class="lede">Plug your remote or hub into this computer with a USB cable, then connect to read its model, firmware and serial number.</p>
     <div class="card stack">
@@ -222,7 +222,6 @@ function remoteView() {
             : '<button class="btn primary" data-act="usb-connect">Connect remote</button>'}
       </div>
       ${info?.protocol === 'legacy' ? `<p class="small">This model uses the older USB protocol, which the browser app can’t read yet. Use the harmonyforge command-line tool instead: <code>harmonyforge identify</code>. See <a href="${REPO_URL}#installing">installing harmonyforge</a>.</p>` : ''}
-      ${info?.protocol === 'mixed' ? `<p class="small">This USB ID is shared by newer and older models. If reading fails, it's probably a Harmony 665 or similar older remote: use <code>harmonyforge identify</code> from the <a href="${REPO_URL}#installing">command-line tool</a> instead.</p>` : ''}
       ${usb.progress ? `<progress value="${usb.progress[0]}" max="${usb.progress[1]}"></progress>` : ''}
       ${usb.error ? `<p class="small" style="color:var(--danger)">${esc(usb.error)}</p>` : ''}
     </div>

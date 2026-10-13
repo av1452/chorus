@@ -1,5 +1,5 @@
 // Offline cache for the app shell. Bump VERSION when shipping changes.
-const VERSION = 'chorus-v4';
+const VERSION = 'chorus-v5';
 const SHELL = ['./', 'index.html', 'styles.css', 'manifest.webmanifest', 'icons/icon.svg',
   'src/app.js', 'src/store.js', 'src/usb.js', 'src/protocol.js', 'src/models.js'];
 

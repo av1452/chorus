@@ -15,11 +15,16 @@ you write anything.
 
 ## Install
 
+harmonyforge isn't on PyPI yet; install it from GitHub.
+
 ```bash
+# Windows
+pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
+
+# macOS / Linux
 brew install libusb          # macOS
 # or: sudo apt install libusb-1.0-0
-
-pip install harmonyforge
+pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
 ```
 
 On Linux, allow non-root access to the device:
@@ -29,10 +34,10 @@ sudo cp packaging/99-harmonyforge.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-On Windows the remote needs a libusb-compatible driver. Use
-[Zadig](https://zadig.akeo.ie/): pick the Harmony device, choose WinUSB,
-install. If you would rather not replace the driver, `pip install
-harmonyforge[hidapi]` and pass `--backend hidapi`.
+On Windows, the `hidapi` extra talks to the remote through Windows' own HID
+driver, so no driver changes are needed: harmonyforge uses it automatically
+when libusb isn't installed. (Installing a WinUSB driver with
+[Zadig](https://zadig.akeo.ie/) also works, but replaces the remote's driver.)
 
 ## 1. Find the remote
 
