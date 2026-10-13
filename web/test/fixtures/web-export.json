@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "name": "Den",
+  "remote_model": "",
+  "remote_skin": null,
+  "created": "2026-10-13T00:00:00+00:00",
+  "modified": "2026-10-13T00:00:00+00:00",
+  "notes": "",
+  "devices": {
+    "TV": {
+      "name": "TV",
+      "manufacturer": "",
+      "model": "",
+      "type": "television",
+      "power_style": "discrete",
+      "inputs": [
+        "InputHDMI1",
+        "InputHDMI2"
+      ],
+      "power_on_delay_ms": 4000,
+      "inter_command_delay_ms": 100,
+      "repeat_count": 1,
+      "notes": "",
+      "functions": {
+        "PowerOn": {
+          "name": "PowerOn",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "PowerOff": {
+          "name": "PowerOff",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "InputHDMI1": {
+          "name": "InputHDMI1",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "InputHDMI2": {
+          "name": "InputHDMI2",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "VolumeUp": {
+          "name": "VolumeUp",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "VolumeDown": {
+          "name": "VolumeDown",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "Mute": {
+          "name": "Mute",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        }
+      }
+    },
+    "Streamer": {
+      "name": "Streamer",
+      "manufacturer": "",
+      "model": "",
+      "type": "streaming",
+      "power_style": "toggle",
+      "inputs": [],
+      "power_on_delay_ms": 2000,
+      "inter_command_delay_ms": 100,
+      "repeat_count": 1,
+      "notes": "",
+      "functions": {
+        "PowerToggle": {
+          "name": "PowerToggle",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "DirectionUp": {
+          "name": "DirectionUp",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "DirectionDown": {
+          "name": "DirectionDown",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "Select": {
+          "name": "Select",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "Play": {
+          "name": "Play",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        },
+        "Pause": {
+          "name": "Pause",
+          "label": "",
+          "frequency": 38000,
+          "durations": [],
+          "protocol": "",
+          "source": ""
+        }
+      }
+    }
+  },
+  "activities": {
+    "WatchAMovie": {
+      "name": "WatchAMovie",
+      "label": "Watch a movie",
+      "icon": "",
+      "volume_device": "TV",
+      "channel_device": "",
+      "primary_device": "Streamer",
+      "buttons": {
+        "VolumeUp": "TV/VolumeUp",
+        "VolumeDown": "TV/VolumeDown",
+        "Mute": "TV/Mute",
+        "DirectionUp": "Streamer/DirectionUp",
+        "DirectionDown": "Streamer/DirectionDown",
+        "OK": "Streamer/Select",
+        "Play": "Streamer/Play",
+        "Pause": "Streamer/Pause"
+      },
+      "start_sequence": [
+        {
+          "device": "TV",
+          "function": "PowerOn",
+          "delay_ms": 4000,
+          "repeat": 1
+        },
+        {
+          "device": "Streamer",
+          "function": "PowerToggle",
+          "delay_ms": 2000,
+          "repeat": 1
+        },
+        {
+          "device": "TV",
+          "function": "InputHDMI2",
+          "delay_ms": 500,
+          "repeat": 1
+        }
+      ],
+      "stop_sequence": [
+        {
+          "device": "Streamer",
+          "function": "PowerToggle",
+          "delay_ms": 500,
+          "repeat": 1
+        },
+        {
+          "device": "TV",
+          "function": "PowerOff",
+          "delay_ms": 500,
+          "repeat": 1
+        }
+      ]
+    }
+  },
+  "global_buttons": {}
+}

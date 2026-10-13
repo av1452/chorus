@@ -13,6 +13,12 @@ All notable changes to this project are documented here. Format follows
   button maps in the browser, reads newer remotes and hubs over WebHID,
   exports/imports JSON, and works offline as a PWA. Published to GitHub Pages
   by the new `Web app` workflow.
+- The web app now reads and writes the harmonyforge config format directly
+  (same keys, same key order), with power style, warm-up time,
+  volume/channel/primary roles, start and stop sequences, and the same checks
+  as `config validate`. Setups saved by the earlier web app are converted
+  automatically. `tests/test_web_config.py` loads a file exported by the web
+  app and checks it round-trips byte for byte.
 - `docs/protocol-packet-hid.md`: the packet protocol used by newer remotes
   and hubs, documented from static analysis of the MyHarmony client.
 - `config/binary.py`: a parser for the config blob's internal container --

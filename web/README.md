@@ -13,7 +13,9 @@ and read newer remotes and hubs over USB, with nothing to install.
   based on which device handles volume and which handles playback.
 - **USB remote**: plug a supported remote or hub in over USB and read its model, firmware
   version and serial number. A live packet log shows the raw traffic.
-- **Backup**: export and import your setup as a JSON file.
+- **Setup file**: download and open your setup as a JSON file in the **same format as the
+  harmonyforge command-line tool**, so you can plan in the browser and add IR codes with the CLI
+  (or the other way round). It also runs the same checks as `harmonyforge config validate`.
 - Works offline and can be installed as an app.
 
 ## What it doesn't do (yet)
@@ -52,15 +54,20 @@ bar (a monitor with a down arrow), or open the **⋮** menu → **Cast, save and
 ### First-time walkthrough
 
 1. **Devices** → **Add device**. Give it a name (for example "Living room TV") and pick its type.
+   Choose how its power works: separate **Power On / Power Off** buttons are the most reliable.
    Leave **Commands** empty to start with common commands for that type, or type your own
    (one per line). Repeat for each device.
 2. **Activities** → **Add activity**. Name it ("Watch TV"), tick the devices it uses, choose
-   each device's input, and pick which device controls volume and which controls playback.
-   The card then lists the start-up steps.
+   each device's input, and pick which device controls volume, channels, and menus/playback.
+   The card then lists the start-up and turn-off steps.
 3. **Buttons** → choose an activity, click a button on the on-screen remote, and choose what
    it sends. **Fill in suggestions** maps the obvious ones for you.
-4. **Backup** → **Export setup** saves a `chorus-setup.json` file. Your setup lives only in
-   this browser, so export it if you clear your browser data or switch computers.
+4. **Setup file** → **Download setup file** saves it as JSON. Your setup lives only in this
+   browser, so download it if you clear your browser data or switch computers.
+
+Commands start as names only. To give them real IR codes, use the command-line tool on the
+downloaded file (`harmonyforge learn` to learn from your old remote, or `harmonyforge codes`
+to import a database), then open the file here again with **Open setup file**.
 
 ### Reading a remote over USB
 

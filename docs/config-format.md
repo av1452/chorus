@@ -4,6 +4,9 @@ A harmonyforge configuration is a single JSON file (YAML also works, with
 PyYAML installed). It is designed to be read, diffed and kept in version
 control — which is the thing a cloud-only configuration never was.
 
+The [web app](../web/README.md) reads and writes this same format, so a file
+can move between the browser and the command line.
+
 ## Top level
 
 ```json

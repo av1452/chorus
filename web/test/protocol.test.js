@@ -2,7 +2,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Cmd, Sequence, encodeCommand, isReplyTo, param, parseDataPacket, parseOpenReply,
   parseSystemInfo } from '../src/protocol.js';
-import { normalize, startSequence, suggestButtons } from '../src/store.js';
 import { lookupRemote } from '../src/models.js';
 
 test('ping is header-only and zero-padded to the report width', () => {
@@ -58,28 +57,4 @@ test('known remotes are looked up by USB ids', () => {
   assert.equal(lookupRemote(0x046d, 0xc12b).protocol, 'packet');
   assert.equal(lookupRemote(0x046d, 0xc111).protocol, 'legacy');
   assert.equal(lookupRemote(0x1234, 0x5678), null);
-});
-
-test('activities derive start steps and button suggestions from devices', () => {
-  const config = normalize({
-    devices: [
-      { id: 'tv', name: 'TV', commands: ['PowerOn', 'InputHdmi2', 'VolumeUp'] },
-      { id: 'box', name: 'Box', commands: ['PowerToggle', 'ChannelUp', 'Select'] },
-    ],
-    activities: [{ id: 'a', name: 'Watch', devices: [{ deviceId: 'tv', input: 'InputHdmi2' }, { deviceId: 'box' }], roles: { volume: 'tv', playback: 'box' } }],
-  });
-  const [a] = config.activities;
-  assert.deepEqual(startSequence(a, config.devices), [
-    { device: 'TV', command: 'PowerOn' }, { device: 'Box', command: 'PowerToggle' }, { device: 'TV', command: 'InputHdmi2' },
-  ]);
-  const b = suggestButtons(a, config.devices);
-  assert.deepEqual(b.volUp, { deviceId: 'tv', command: 'VolumeUp' });
-  assert.deepEqual(b.chUp, { deviceId: 'box', command: 'ChannelUp' });
-  assert.deepEqual(b.ok, { deviceId: 'box', command: 'Select' });
-  assert.equal(b.mute, undefined);
-});
-
-test('normalize rejects junk and fills missing lists', () => {
-  assert.throws(() => normalize(null));
-  assert.deepEqual(normalize({}).devices, []);
 });
