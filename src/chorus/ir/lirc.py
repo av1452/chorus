@@ -81,7 +81,7 @@ class LircRemote:
         if not self.one or not self.zero:
             raise IRError(
                 f"{self.name!r} is not a raw remote but defines no "
-                "one/zero timings, so harmonyforge cannot synthesise its "
+                "one/zero timings, so chorus cannot synthesise its "
                 "waveform. This usually means an unsupported encoding "
                 f"(flags: {'|'.join(sorted(self.flags)) or 'none'})."
             )

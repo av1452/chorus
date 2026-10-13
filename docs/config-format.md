@@ -1,6 +1,6 @@
 # Configuration file format
 
-A harmonyforge configuration is a single JSON file (YAML also works, with
+A Chorus configuration is a single JSON file (YAML also works, with
 PyYAML installed). It is designed to be read, diffed and kept in version
 control — which is the thing a cloud-only configuration never was.
 
@@ -24,7 +24,7 @@ can move between the browser and the command line.
 }
 ```
 
-`schema_version` is checked on load. A file from a newer harmonyforge is
+`schema_version` is checked on load. A file from a newer Chorus is
 refused rather than misread.
 
 ## Devices
@@ -177,8 +177,8 @@ Mappings that apply outside any activity:
 ## Validation
 
 ```bash
-harmonyforge config validate living-room.json
-harmonyforge config validate living-room.json --strict   # non-zero on warnings
+chorus config validate living-room.json
+chorus config validate living-room.json --strict   # non-zero on warnings
 ```
 
 Warnings, not errors: an incomplete config is still worth saving and editing.
@@ -186,9 +186,9 @@ Warnings, not errors: an incomplete config is still worth saving and editing.
 
 ## YAML
 
-Same structure. Needs `pip install 'harmonyforge[yaml]'`, and the format
+Same structure. Needs `pip install 'chorus-remote[yaml]'`, and the format
 follows the file extension:
 
 ```bash
-harmonyforge config show living-room.yaml
+chorus config show living-room.yaml
 ```

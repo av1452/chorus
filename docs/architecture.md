@@ -3,7 +3,7 @@
 ## Layout
 
 ```
-src/harmonyforge/
+src/chorus/
 ├── devicedb.py          Hardware tables: models, architectures, flash chips
 ├── errors.py            Exception hierarchy
 ├── cli.py               Command-line interface
@@ -69,7 +69,7 @@ protocol assertions are against `protocol.py` directly.
 The web UI runs on `http.server`. The WebSocket client is implemented from
 scratch against RFC 6455. YAML and hidapi are optional extras. A tool for
 rescuing abandoned hardware should not itself rot from dependency churn, and
-`pip install harmonyforge` pulling in one package makes it far more likely to
+`pip install chorus` pulling in one package makes it far more likely to
 still install in five years.
 
 ### Validation warns, it does not refuse
@@ -80,7 +80,7 @@ saveable. `--strict` turns warnings into a non-zero exit for CI.
 
 ## Error handling
 
-All exceptions descend from `HarmonyForgeError`, and the CLI catches that one
+All exceptions descend from `ChorusError`, and the CLI catches that one
 type and prints the message without a traceback. So error messages are part
 of the interface, and they are expected to say what to *do*:
 
@@ -100,7 +100,7 @@ someone with less context than the code had.
 
 ```bash
 pytest                      # 293 tests, no hardware needed
-pytest --cov=harmonyforge
+pytest --cov=chorus
 ruff check src tests
 ```
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>harmonyforge</title>
+<title>Chorus</title>
 <style>
   :root {
     --bg: #f6f7f9; --panel: #ffffff; --ink: #14181f; --muted: #5d6673;
@@ -99,7 +99,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">harmonyforge<span id="version"></span></div>
+  <div class="brand">Chorus<span id="version"></span></div>
   <nav id="tabs">
     <button data-tab="remote" aria-selected="true">Remote</button>
     <button data-tab="devices" aria-selected="false">Devices</button>
@@ -151,7 +151,7 @@
       </div>
       <div id="noDevices" class="empty">
         No devices yet. Add one below, then give it IR codes by learning them
-        from the original remote (<code>harmonyforge learn</code>) or importing
+        from the original remote (<code>chorus learn</code>) or importing
         a code set.
       </div>
     </div>
@@ -266,9 +266,9 @@
       </div>
       <div id="noCodes" class="empty">
         The library is empty. Populate it from your own remotes with
-        <code>harmonyforge learn --device "Sony TV" PowerOn VolumeUp</code>,
+        <code>chorus learn --device "Sony TV" PowerOn VolumeUp</code>,
         or import a collection with
-        <code>harmonyforge codes import ~/Flipper-IRDB</code>.
+        <code>chorus codes import ~/Flipper-IRDB</code>.
       </div>
     </div>
     <div class="panel hidden" id="codeDetail">
@@ -335,9 +335,9 @@ async function refreshStatus() {
             r.usbnet ? '<span class="pill">usbnet — not programmable yet</span>' : ""
           }</td></tr>`).join("")
         }</tbody></table></div>
-        <p style="color:var(--muted);font-size:13px;margin-top:10px">Run <code class="mono">harmonyforge identify</code> for firmware, architecture and serial numbers.</p>`
+        <p style="color:var(--muted);font-size:13px;margin-top:10px">Run <code class="mono">chorus identify</code> for firmware, architecture and serial numbers.</p>`
       : `No Harmony remote found on USB.<br><br>Check that the cable carries data (charge-only cables are the usual culprit), and that older remotes are powered on.
-         <br><br>Hub-based remotes (Hub, Elite, Companion, Ultimate) never appear on USB — use <code>harmonyforge hub discover</code>.`;
+         <br><br>Hub-based remotes (Hub, Elite, Companion, Ultimate) never appear on USB — use <code>chorus hub discover</code>.`;
   } catch (error) {
     $("dot").className = "dot off";
     $("statusText").textContent = "USB unavailable";

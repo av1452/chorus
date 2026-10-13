@@ -26,7 +26,7 @@ from ..config.model import (
     RemoteConfig,
     Step,
 )
-from ..errors import HarmonyForgeError
+from ..errors import ChorusError
 from ..ir import pronto, protocols
 from ..ir.database import CodeLibrary
 
@@ -63,7 +63,7 @@ class AppState:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = f"harmonyforge/{__version__}"
+    server_version = f"chorus/{__version__}"
     state: AppState
 
     # -- plumbing ---------------------------------------------------------
@@ -91,11 +91,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             data = json.loads(raw)
         except json.JSONDecodeError as exc:
-            raise HarmonyForgeError(
+            raise ChorusError(
                 f"request body is not valid JSON: {exc}"
             ) from exc
         if not isinstance(data, dict):
-            raise HarmonyForgeError("request body must be a JSON object")
+            raise ChorusError("request body must be a JSON object")
         return data
 
     def _serve_static(self, path: str) -> None:
@@ -148,7 +148,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(self._meta())
             else:
                 self._send_error_json("unknown endpoint", 404)
-        except HarmonyForgeError as exc:
+        except ChorusError as exc:
             self._send_error_json(str(exc))
         except Exception as exc:  # pragma: no cover
             log.exception("GET %s failed", route)
@@ -180,7 +180,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(self._backup(body))
             else:
                 self._send_error_json("unknown endpoint", 404)
-        except HarmonyForgeError as exc:
+        except ChorusError as exc:
             self._send_error_json(str(exc))
         except Exception as exc:  # pragma: no cover
             log.exception("POST %s failed", route)
@@ -244,7 +244,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def _code_detail(self, slug: str) -> dict:
         if not slug:
-            raise HarmonyForgeError("slug is required")
+            raise ChorusError("slug is required")
         code_set = self.state.library.find(slug)
         return {
             "slug": code_set.slug,
@@ -290,7 +290,7 @@ class Handler(BaseHTTPRequestHandler):
     def _upsert_device(self, body: dict) -> dict:
         name = (body.get("name") or "").strip()
         if not name:
-            raise HarmonyForgeError("a device needs a name")
+            raise ChorusError("a device needs a name")
 
         with self.state.lock:
             config = self.state.config
@@ -345,7 +345,7 @@ class Handler(BaseHTTPRequestHandler):
         name = body.get("name") or ""
         with self.state.lock:
             if name not in self.state.config.devices:
-                raise HarmonyForgeError(f"no device named {name!r}")
+                raise ChorusError(f"no device named {name!r}")
             del self.state.config.devices[name]
             path = self.state.save()
         return {"deleted": name, "saved": bool(path)}
@@ -353,7 +353,7 @@ class Handler(BaseHTTPRequestHandler):
     def _upsert_activity(self, body: dict) -> dict:
         name = (body.get("name") or "").strip()
         if not name:
-            raise HarmonyForgeError("an activity needs a name")
+            raise ChorusError("an activity needs a name")
         with self.state.lock:
             config = self.state.config
             original = (body.get("original_name") or name).strip()
@@ -393,7 +393,7 @@ class Handler(BaseHTTPRequestHandler):
         name = body.get("name") or ""
         with self.state.lock:
             if name not in self.state.config.activities:
-                raise HarmonyForgeError(f"no activity named {name!r}")
+                raise ChorusError(f"no activity named {name!r}")
             del self.state.config.activities[name]
             path = self.state.save()
         return {"deleted": name, "saved": bool(path)}
@@ -425,7 +425,7 @@ class Handler(BaseHTTPRequestHandler):
         device_name = body.get("device") or ""
         name = (body.get("name") or "").strip()
         if not name:
-            raise HarmonyForgeError("a function needs a name")
+            raise ChorusError("a function needs a name")
 
         with self.state.lock:
             device = self.state.config.device(device_name)
@@ -441,7 +441,7 @@ class Handler(BaseHTTPRequestHandler):
                     name, signal, source=f"synthesised:{body['protocol']}"
                 )
             else:
-                raise HarmonyForgeError(
+                raise ChorusError(
                     "provide either a Pronto code or a protocol plus fields"
                 )
             device.add(function)
@@ -473,7 +473,7 @@ class Handler(BaseHTTPRequestHandler):
         name = (body.get("name") or "").strip()
         device_name = body.get("device") or ""
         if not name:
-            raise HarmonyForgeError("a function name is required")
+            raise ChorusError("a function name is required")
 
         with open_remote() as transport:
             remote = HarmonyRemote(transport)

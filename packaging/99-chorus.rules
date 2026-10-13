@@ -1,7 +1,7 @@
-# udev rules for Logitech Harmony remotes, for use with harmonyforge.
+# udev rules for Logitech Harmony remotes, for use with chorus.
 #
 # Install:
-#   sudo cp 99-harmonyforge.rules /etc/udev/rules.d/
+#   sudo cp 99-chorus.rules /etc/udev/rules.d/
 #   sudo udevadm control --reload-rules && sudo udevadm trigger
 #
 # Grants the "plugdev" group read/write access. Add yourself to it if needed:

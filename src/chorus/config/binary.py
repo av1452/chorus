@@ -1,7 +1,7 @@
 """The shared outer container of a Harmony config binary.
 
 This is a different, separately-sourced layer of knowledge from the rest of
-harmonyforge: everything elsewhere in this package (the USB protocol, the
+chorus: everything elsewhere in this package (the USB protocol, the
 device/architecture tables) comes from libconcord, which treats the config
 region as an opaque blob it only ever moves, never interprets. This module
 instead parses the *inside* of that blob.
@@ -19,7 +19,7 @@ four-letter magic strings differing per architecture. See NOTICE.md.
 is unmapped for architecture 14 (the subject of this port) -- nobody has
 published a device/activity/button-table decode for it yet. This module
 gets you to the start of each section and its byte range; the content past
-that point is exactly as opaque to harmonyforge as it was before. Nothing
+that point is exactly as opaque to chorus as it was before. Nothing
 here writes to a remote.
 """
 
@@ -27,10 +27,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..errors import HarmonyForgeError
+from ..errors import ChorusError
 
 
-class BinaryFormatError(HarmonyForgeError):
+class BinaryFormatError(ChorusError):
     """A config blob did not match the expected container shape.
 
     Raised instead of silently guessing, because a config is a compiled
@@ -177,7 +177,7 @@ def parse_container(blob: bytes, architecture: int, config_base: int) -> Contain
     """Parse the outer container of a config blob.
 
     ``config_base`` should come from
-    :func:`harmonyforge.devicedb.architecture` -- it is used only to cross-
+    :func:`chorus.devicedb.architecture` -- it is used only to cross-
     check against the base this header's own fields imply, and to convert
     the absolute addresses in the pointer table into file offsets.
 

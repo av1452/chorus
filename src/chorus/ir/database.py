@@ -1,7 +1,7 @@
 """A local, on-disk library of IR code sets.
 
 Logitech's value-add was a cloud database of codes for ~270,000 devices.
-That is gone, so harmonyforge keeps a library on *your* disk instead,
+That is gone, so chorus keeps a library on *your* disk instead,
 populated from whatever sources you have:
 
 * codes you learn from original remotes (the most reliable source);
@@ -27,7 +27,7 @@ from .signal import IRSignal
 LIBRARY_VERSION = 1
 
 #: Where the library lives unless told otherwise.
-DEFAULT_LIBRARY = Path.home() / ".harmonyforge" / "codes"
+DEFAULT_LIBRARY = Path.home() / ".chorus" / "codes"
 
 
 def _slug(text: str) -> str:
@@ -183,7 +183,7 @@ class CodeLibrary:
         if not hits:
             raise IRError(
                 f"no code set matching {slug_or_name!r} in {self.root}. "
-                "Run `harmonyforge codes list` to see what you have."
+                "Run `chorus codes list` to see what you have."
             )
         if len(hits) > 1:
             names = ", ".join(c.slug for c in hits[:8])
@@ -217,7 +217,7 @@ class CodeLibrary:
         if not out:
             raise IRError(
                 f"{path} produced no usable codes. Its remotes may use an "
-                "encoding harmonyforge cannot synthesise (RC-6 and RCMM "
+                "encoding chorus cannot synthesise (RC-6 and RCMM "
                 "definitions are not supported); raw_codes always work."
             )
         return out

@@ -8,8 +8,8 @@ import threading
 
 import pytest
 
-from harmonyforge.errors import HubError
-from harmonyforge.hub.websocket import OP_TEXT, WebSocket
+from chorus.errors import HubError
+from chorus.hub.websocket import OP_TEXT, WebSocket
 
 WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 

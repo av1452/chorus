@@ -1,11 +1,14 @@
-// The setup is stored in harmonyforge's configuration format (docs/config-format.md),
-// so a file exported here works with `harmonyforge config validate` and `harmonyforge serve`,
+// The setup is stored in the Chorus configuration format (docs/config-format.md),
+// so a file exported here works with `chorus config validate` and `chorus serve`,
 // and a file made by the Python tool opens here. Fields this app doesn't edit (IR waveforms,
 // delays, stop sequences, global buttons…) are kept as they are.
 
-const CONFIG_KEY = 'harmonyforge.config.v1';
-const REMOTES_KEY = 'harmonyforge.remotes.v1';
-const LEGACY_KEY = 'chorus.config.v1';
+const CONFIG_KEY = 'chorus.setup.v1';
+const REMOTES_KEY = 'chorus.remotes.v2';
+// Where earlier versions kept the setup, newest first. The oldest used a different
+// (array-based) format, which normalize() converts.
+const OLDER_CONFIG_KEYS = ['harmonyforge.config.v1', 'chorus.config.v1'];
+const OLDER_REMOTES_KEYS = ['harmonyforge.remotes.v1'];
 
 export const SCHEMA_VERSION = 1;
 
@@ -41,7 +44,7 @@ export const DEFAULT_FUNCTIONS = {
   other: ['PowerToggle'],
 };
 
-/** On-screen remote, using the physical button names harmonyforge uses. */
+/** On-screen remote, using the physical button names chorus uses. */
 export const REMOTE_LAYOUT = [
   ['PowerToggle', 'Power'], ['Menu', 'Menu'], ['Guide', 'Guide'],
   ['Info', 'Info'], ['DirectionUp', 'Up'], ['Back', 'Back'],
@@ -83,14 +86,15 @@ export function load() {
   if (current) {
     try { return normalize(current); } catch { /* fall through */ }
   }
-  const legacy = readJson(LEGACY_KEY);
-  if (legacy) {
+  for (const key of OLDER_CONFIG_KEYS) {
+    const older = readJson(key);
+    if (!older) continue;
     try {
-      const migrated = normalize(legacy);
+      const migrated = normalize(older);
       writeJson(CONFIG_KEY, migrated);
-      if (Array.isArray(legacy.remotes) && !readJson(REMOTES_KEY)) writeJson(REMOTES_KEY, legacy.remotes);
+      if (Array.isArray(older.remotes) && !readJson(REMOTES_KEY)) writeJson(REMOTES_KEY, older.remotes);
       return migrated;
-    } catch { /* ignore an unreadable old setup */ }
+    } catch { /* try the next one */ }
   }
   return blankConfig();
 }
@@ -101,12 +105,15 @@ export function save(config) {
 }
 
 export function loadRemotes() {
-  const r = readJson(REMOTES_KEY);
-  return Array.isArray(r) ? r : [];
+  for (const key of [REMOTES_KEY, ...OLDER_REMOTES_KEYS]) {
+    const r = readJson(key);
+    if (Array.isArray(r)) return r;
+  }
+  return [];
 }
 export const saveRemotes = (remotes) => writeJson(REMOTES_KEY, remotes);
 
-// Key order used by harmonyforge's RemoteConfig.to_dict(), so files diff cleanly
+// Key order used by the Python tool's RemoteConfig.to_dict(), so files diff cleanly
 // whichever side saved them. Keys not listed keep their place after these.
 const ORDER = {
   config: ['schema_version', 'name', 'remote_model', 'remote_skin', 'created', 'modified', 'notes', 'devices', 'activities', 'global_buttons'],
@@ -125,7 +132,7 @@ function ordered(obj, keys) {
 
 const mapValues = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(v)]));
 
-/** Serialise for download, in the same shape and key order `harmonyforge` writes. */
+/** Serialise for download, in the same shape and key order `chorus` writes. */
 export function toJson(config) {
   const step = (s) => ordered(s, ORDER.step);
   const doc = ordered({
@@ -137,8 +144,8 @@ export function toJson(config) {
 }
 
 /**
- * Accept a harmonyforge config (or a setup exported by the earlier web app) and return a
- * complete harmonyforge config with defaults filled in. Unknown fields are preserved.
+ * Accept a chorus config (or a setup exported by the earlier web app) and return a
+ * complete chorus config with defaults filled in. Unknown fields are preserved.
  */
 export function normalize(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Not a configuration file');
@@ -244,7 +251,7 @@ export function uniqueName(map, wanted, except) {
   return name;
 }
 
-/** Activity keys follow harmonyforge's style: "Watch TV" → "WatchTV". */
+/** Activity keys follow chorus's style: "Watch TV" → "WatchTV". */
 export function activityName(activities, label, except) {
   const base = label.replace(/[^A-Za-z0-9]+(.)?/g, (_, ch) => (ch ? ch.toUpperCase() : ''))
     .replace(/^./, (ch) => ch.toUpperCase()) || 'Activity';
@@ -372,7 +379,7 @@ export function suggestButtons(config, activity) {
   return buttons;
 }
 
-/** The same checks as `harmonyforge config validate`, so problems show up here first. */
+/** The same checks as `chorus config validate`, so problems show up here first. */
 export function validate(config) {
   const warnings = [];
   for (const d of Object.values(config.devices)) {

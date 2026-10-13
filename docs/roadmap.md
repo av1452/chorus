@@ -2,7 +2,7 @@
 
 ## The big missing piece: the binary config compiler
 
-harmonyforge can read and write the remote's configuration region as an
+Chorus can read and write the remote's configuration region as an
 opaque blob. It can model a configuration — devices, activities, button
 maps — in its own format. What it **cannot** do yet is turn the second into
 the first.
@@ -13,7 +13,7 @@ That matters, so here is exactly where the boundary sits.
 
 - Read the config region off the remote (`backup`)
 - Write a previously-read blob back (`restore`)
-- Build, edit and validate a `RemoteConfig` in harmonyforge's format
+- Build, edit and validate a `RemoteConfig` in Chorus's format
 - Collect, decode and organise all the IR codes it needs
 
 **Does not work today**
@@ -31,7 +31,7 @@ end-of-config address, and a table of absolute flash addresses pointing at
 ~18 contiguous sections — is reverse-engineered and confirmed shared
 across architectures 8, 9, 12 and 14 by the
 [harmony-decompiler](https://github.com/trelowney/harmony-decompiler)
-project. harmonyforge implements that container layer
+project. Chorus implements that container layer
 (`config/binary.py`), independently re-verified against a real
 architecture-14 backup — see `docs/binary-config-format.md`.
 
@@ -59,7 +59,7 @@ In rough order of effort and payoff:
    physical remotes on architecture 12 or 14 (the 665, the 700, the One).
    This is how harmony-decompiler established the 650/890 shared structure:
    comparing dumps from different contributors, not before/after diffing
-   one person's remote. `harmonyforge backup` plus the `.json` sidecar is
+   one person's remote. `chorus backup` plus the `.json` sidecar is
    enough; no change needs to be made to the remote first.
 
 2. **Map section contents**, following harmony-decompiler's own method on
@@ -80,7 +80,7 @@ In rough order of effort and payoff:
    writing a generated config to a 665 or 700 is not safe at any step.
 
 If you have a 665, 700, or One and are willing to contribute a backup,
-please [open an issue](https://github.com/av1452/harmonyforge/issues) or
+please [open an issue](https://github.com/av1452/chorus/issues) or
 send it to harmony-decompiler directly — either is the critical path right
 now.
 
@@ -90,14 +90,14 @@ now.
 
 Every USB code path is implemented and unit-tested, and none of it has
 touched a physical remote. Confirmations — positive or negative — are the
-second most useful contribution. Running `harmonyforge identify --verbose`
+second most useful contribution. Running `chorus identify --verbose`
 and pasting the output into an issue is enough to validate the identity path
 for a model.
 
 ### The usbnet family (890, 900, 1100)
 
 These present Ethernet-over-USB rather than HID, and locate their config
-through an on-device region table rather than a fixed address. harmonyforge
+through an on-device region table rather than a fixed address. Chorus
 detects them and declines rather than guessing. Supporting them means
 implementing the region-table lookup and the USBNET transport;
 [concordance](https://github.com/jaymzh/concordance) already does both, so
@@ -110,7 +110,7 @@ raw flash addressing, implemented in libconcord's `remote_mh.cpp`.
 
 ### Firmware updates
 
-libconcord can flash firmware. harmonyforge deliberately does not: the
+libconcord can flash firmware. Chorus deliberately does not: the
 failure mode is a brick, and the safe-mode recovery path needs hardware
 testing before it would be responsible to ship. Not planned until the read
 and write paths have real mileage.

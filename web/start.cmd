@@ -7,7 +7,7 @@ if errorlevel 1 (
   echo Install the LTS version from https://nodejs.org, then double-click start.cmd again.
   echo.
   echo Or skip installing anything and use the online version:
-  echo   https://av1452.github.io/harmonyforge/
+  echo   https://av1452.github.io/chorus/
   pause
   exit /b 1
 )

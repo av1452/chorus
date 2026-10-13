@@ -1,12 +1,12 @@
-"""harmonyforge -- program Logitech Harmony remotes without Logitech.
+"""chorus -- program Logitech Harmony remotes without Logitech.
 
 An open-source replacement for the retired MyHarmony desktop software and
 the Harmony cloud service.
 
 Quick start::
 
-    from harmonyforge.usb.transport import open_remote
-    from harmonyforge.usb.remote import HarmonyRemote
+    from chorus.usb.transport import open_remote
+    from chorus.usb.remote import HarmonyRemote
 
     with open_remote() as transport:
         remote = HarmonyRemote(transport)

@@ -1,9 +1,9 @@
-# Chorus (harmonyforge web app)
+# Chorus web app
 
-The in-browser part of [harmonyforge](../README.md): set up devices, activities and buttons,
+The in-browser part of [Chorus](../README.md): set up devices, activities and buttons,
 and read newer remotes and hubs over USB, with nothing to install.
 
-**Use it now:** https://av1452.github.io/harmonyforge/
+**Use it now:** https://av1452.github.io/chorus/
 
 ## What it does
 
@@ -14,8 +14,8 @@ and read newer remotes and hubs over USB, with nothing to install.
 - **USB remote**: plug a supported remote or hub in over USB and read its model, firmware
   version and serial number. A live packet log shows the raw traffic.
 - **Setup file**: download and open your setup as a JSON file in the **same format as the
-  harmonyforge command-line tool**, so you can plan in the browser and add IR codes with the CLI
-  (or the other way round). It also runs the same checks as `harmonyforge config validate`.
+  Chorus command-line tool**, so you can plan in the browser and add IR codes with the CLI
+  (or the other way round). It also runs the same checks as `chorus config validate`.
 - Works offline and can be installed as an app.
 
 ## What it doesn't do (yet)
@@ -24,7 +24,7 @@ and read newer remotes and hubs over USB, with nothing to install.
   configuration on the vendor's servers from their device and IR-code database. Chorus doesn't
   have that database, so syncing a remote isn't possible yet.
 - Talk to older USB remotes (650, 665, 700, One, 880 and similar). Those use a different protocol
-  that the [harmonyforge Python tool](../README.md) already supports, including backup and
+  that the [Chorus Python tool](../README.md) already supports, including backup and
   IR learning. They're marked "use Python tool" on the USB remote screen.
 
 See [docs/protocol-packet-hid.md](../docs/protocol-packet-hid.md) for what is known about the USB protocol and how it was worked out.
@@ -35,7 +35,7 @@ See [docs/protocol-packet-hid.md](../docs/protocol-packet-hid.md) for what is kn
 
 You don't need to download or install anything. Open the link and start using it:
 
-**https://av1452.github.io/harmonyforge/**
+**https://av1452.github.io/chorus/**
 
 ### Which browser?
 
@@ -66,7 +66,7 @@ bar (a monitor with a down arrow), or open the **⋮** menu → **Cast, save and
    browser, so download it if you clear your browser data or switch computers.
 
 Commands start as names only. To give them real IR codes, use the command-line tool on the
-downloaded file (`harmonyforge learn` to learn from your old remote, or `harmonyforge codes`
+downloaded file (`chorus learn` to learn from your old remote, or `chorus codes`
 to import a database), then open the file here again with **Open setup file**.
 
 ### Reading a remote over USB
@@ -99,16 +99,16 @@ Only do this if you want to change the code. Otherwise use the link above.
 **With Git:**
 
 ```bash
-git clone https://github.com/av1452/harmonyforge.git
+git clone https://github.com/av1452/chorus.git
 ```
 
 ```bash
-cd harmonyforge/web
+cd chorus/web
 ```
 
-**Without Git:** on the [repository page](https://github.com/av1452/harmonyforge), click the
+**Without Git:** on the [repository page](https://github.com/av1452/chorus), click the
 green **Code** button → **Download ZIP**. Right-click the ZIP → **Extract All**, then open the
-`web` folder inside the extracted `harmonyforge-main` folder.
+`web` folder inside the extracted `chorus-main` folder.
 
 ### 3. Start it
 
@@ -154,11 +154,11 @@ publishes this folder to GitHub Pages whenever `web/` changes on `main`. In a fo
 
 ## Legal
 
-harmonyforge and Chorus are not affiliated with or endorsed by Logitech. "Harmony" is a trademark of its owner
+Chorus and Chorus are not affiliated with or endorsed by Logitech. "Harmony" is a trademark of its owner
 and is used here only to describe compatibility. This repository contains no code, data files
 or artwork from the original software; protocol details were documented from the publicly
 available application for interoperability.
 
 ## License
 
-GPL-3.0-or-later, like the rest of harmonyforge. See [LICENSE](../LICENSE).
+GPL-3.0-or-later, like the rest of chorus. See [LICENSE](../LICENSE).

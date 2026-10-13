@@ -2,7 +2,7 @@
 
 ## concordance / libconcord
 
-harmonyforge's USB protocol implementation derives from
+Chorus's USB protocol implementation derives from
 [**concordance**](https://github.com/jaymzh/concordance) and its library
 **libconcord**, licensed GPLv3.
 
@@ -28,12 +28,12 @@ Specifically, the following are derived from libconcord:
   protocol as libconcord implements it
 
 Timmerman and Dibowitz reverse-engineered this protocol and have maintained
-it for over a decade. harmonyforge is a reimplementation in Python with a
+it for over a decade. Chorus is a reimplementation in Python with a
 different interface; it is not a fork, and it adds no protocol knowledge of
 its own. **If you need battle-tested Harmony programming today, use
 concordance** — it has the hardware mileage this project does not.
 
-harmonyforge is licensed GPL-3.0-or-later to match.
+Chorus is licensed GPL-3.0-or-later to match.
 
 ## LIRC
 
@@ -89,7 +89,7 @@ match.
 ## Trademarks
 
 "Logitech" and "Harmony" are trademarks of Logitech International S.A.
-harmonyforge is not affiliated with, endorsed by, or connected to Logitech in
+Chorus is not affiliated with, endorsed by, or connected to Logitech in
 any way. The names are used solely to identify the hardware this software
 interoperates with.
 

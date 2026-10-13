@@ -13,8 +13,8 @@ On Windows it has been confirmed through **both** backends: libusb, and
 hidapi with Windows' own HID driver (no Zadig needed; `pip install hidapi`),
 where two consecutive backups were byte-identical.
 Nothing's write path has been confirmed on any model. If you own one of
-these, running `harmonyforge identify` and
-[opening an issue](https://github.com/av1452/harmonyforge/issues) with the
+these, running `chorus identify` and
+[opening an issue](https://github.com/av1452/chorus/issues) with the
 output is the most valuable contribution available right now — whether it
 works or not.
 
@@ -59,14 +59,14 @@ works or not.
 | Harmony 1100 | 63 | 11 | Same as 890 |
 
 These present an Ethernet-over-USB interface (PID `0xC11F`) rather than the
-HID interface harmonyforge uses, and locate their configuration through a
+HID interface Chorus uses, and locate their configuration through a
 region table rather than at a fixed address. `identify` may work; reading and
 writing configuration does not. [concordance](https://github.com/jaymzh/concordance)
 supports several of these — use it for this family.
 
 ## Hub-based remotes
 
-These never appear on USB. Use `harmonyforge hub`, which works over your
+These never appear on USB. Use `chorus hub`, which works over your
 local network with no Logitech account.
 
 | Model | Local API | Notes |
@@ -109,5 +109,5 @@ The Harmony platform was licensed out, and these use the same protocol:
 | Spansion S25FL004A | `0xFF`/`0x12` | 512 KB | uniform 64 KB |
 | Atmel AT49BV322A | `0x1F`/`0xC8` | 4 MB | non-uniform |
 
-Some firmware reports the manufacturer and device IDs swapped; harmonyforge
+Some firmware reports the manufacturer and device IDs swapped; Chorus
 tries both orders before falling back to a conservative default.

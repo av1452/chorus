@@ -13,11 +13,11 @@ replaced the old XMPP interface (port 5222) with the WebSocket one.
 The hub answers SSDP searches for `urn:myharmony-com:device:harmony:1`:
 
 ```bash
-harmonyforge hub discover
+chorus hub discover
 ```
 
 ```python
-from harmonyforge.hub.discovery import discover
+from chorus.hub.discovery import discover
 
 for hub in discover(timeout=4.0):
     print(hub.address, hub.friendly_name)
@@ -49,7 +49,7 @@ The `Origin: http://sleekxmpp` header is checked. It is a legacy value from
 the XMPP days, and the hub still expects it.
 
 ```python
-from harmonyforge.hub.client import HarmonyHub
+from chorus.hub.client import HarmonyHub
 
 with HarmonyHub("192.168.1.50") as hub:
     print(hub.remote_id)
@@ -72,7 +72,7 @@ Every request is JSON wrapped in an envelope:
 ```
 
 The hub also pushes unsolicited state notifications down the same socket, so
-a client has to correlate replies by `id` and ignore the rest. harmonyforge
+a client has to correlate replies by `id` and ignore the rest. Chorus
 does this in `HarmonyHub._call`.
 
 `vnd.logitech.harmony/vnd.logitech.harmony.engine` appears so often it is
@@ -105,7 +105,7 @@ Press then immediately release is a tap. Hold the gap open and the device
 sees a held key, which is what volume ramps need:
 
 ```bash
-harmonyforge hub -a 192.168.1.50 send 12345 VolumeUp --hold 400
+chorus hub -a 192.168.1.50 send 12345 VolumeUp --hold 400
 ```
 
 ### Powering everything off
@@ -113,14 +113,14 @@ harmonyforge hub -a 192.168.1.50 send 12345 VolumeUp --hold 400
 "Off" is just activity `-1`:
 
 ```bash
-harmonyforge hub -a 192.168.1.50 off
+chorus hub -a 192.168.1.50 off
 ```
 
 ## Reading the configuration
 
 ```bash
-harmonyforge hub -a 192.168.1.50 activities
-harmonyforge hub -a 192.168.1.50 devices --verbose
+chorus hub -a 192.168.1.50 activities
+chorus hub -a 192.168.1.50 devices --verbose
 ```
 
 ```python
@@ -130,13 +130,13 @@ with HarmonyHub("192.168.1.50") as hub:
         print("  ", ", ".join(sorted(device.commands)))
 ```
 
-## Exporting to harmonyforge
+## Exporting to Chorus
 
 ```bash
-harmonyforge hub -a 192.168.1.50 export -o hub-config.json
+chorus hub -a 192.168.1.50 export -o hub-config.json
 ```
 
-This pulls the hub's device and activity structure into harmonyforge's own
+This pulls the hub's device and activity structure into Chorus's own
 format.
 
 **One important limitation:** the hub exposes command *names*, not IR
@@ -154,5 +154,5 @@ removed the ability to change a hub's configuration through Logitech's tools,
 but not the ability to read or drive the configuration already on it.
 
 That is also why `hub export` is worth running even if you do not plan to use
-harmonyforge to control things: it gets your configuration out of a device
+Chorus to control things: it gets your configuration out of a device
 whose vendor has stopped supporting it, into a file you keep.

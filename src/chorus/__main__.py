@@ -1,4 +1,4 @@
-"""Allow ``python -m harmonyforge``."""
+"""Allow ``python -m chorus``."""
 
 import sys
 

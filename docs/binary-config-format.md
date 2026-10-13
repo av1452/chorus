@@ -1,7 +1,7 @@
 # The config binary format
 
 This is a different, separately-sourced layer from the rest of
-harmonyforge's documentation. Everything else here traces back to
+Chorus's documentation. Everything else here traces back to
 libconcord, which treats the configuration region as an opaque blob -- it
 reads and writes it, but never looks inside. This page documents what is
 inside, which is a different (and much less complete) body of knowledge.
@@ -35,7 +35,7 @@ exists rather than staying a one-off exploration.
 ## The container
 
 A config blob (the raw flash bytes at `config_base` -- what
-`harmonyforge backup` saves, no XML wrapper) starts with:
+`chorus backup` saves, no XML wrapper) starts with:
 
 ```
 0x00  4 bytes   cookie / magic (architecture-specific)
@@ -65,14 +65,14 @@ pointer to diff against.
 
 Architecture 8's table has a **null in the middle**, not only at the end --
 reading until the first zero (the obvious implementation) silently
-truncates it. `harmonyforge.config.binary.Section.is_present` exists
+truncates it. `chorus.config.binary.Section.is_present` exists
 because of this.
 
 ## What this gets you, and what it does not
 
-`harmonyforge.config.binary.parse_container()` gets you the header fields
+`chorus.config.binary.parse_container()` gets you the header fields
 and the byte range of each section. That is genuinely useful on its own --
-`harmonyforge inspect-binary <backup>` will show you the shape of your own
+`chorus inspect-binary <backup>` will show you the shape of your own
 config without needing the remote attached.
 
 **It does not decode what is inside any section.** That is a separate, much
@@ -94,7 +94,7 @@ representation, edit that, recompile, and require the result to be byte-
 identical to a direct re-encoding -- exists specifically because patching
 in place does not.
 
-## What this means for harmonyforge's own roadmap
+## What this means for Chorus's own roadmap
 
 This closes part of the gap described in `docs/roadmap.md`, but not the
 practical one. Understanding the container tells you *where* the device and
@@ -108,7 +108,7 @@ itself to before trusting its own output.
 
 ## Contributing
 
-The single most useful thing you can add: a real backup (`harmonyforge
+The single most useful thing you can add: a real backup (`chorus
 backup`) from a Harmony 665, 700, or anything else on architecture 12 or
 14, with its `.json` sidecar. No paired before/after samples needed --
 per the diffing finding above, they would not help directly anyway.

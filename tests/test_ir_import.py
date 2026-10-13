@@ -2,9 +2,9 @@
 
 import pytest
 
-from harmonyforge.errors import IRError
-from harmonyforge.ir import flipper, lirc, protocols
-from harmonyforge.ir.database import CodeLibrary, CodeSet
+from chorus.errors import IRError
+from chorus.ir import flipper, lirc, protocols
+from chorus.ir.database import CodeLibrary, CodeSet
 
 SPACE_ENC_CONF = """
 begin remote
@@ -161,7 +161,7 @@ def test_flipper_dump_round_trip():
 
 
 def test_flipper_dump_falls_back_to_raw_for_unknown_signals():
-    from harmonyforge.ir.signal import IRSignal
+    from chorus.ir.signal import IRSignal
 
     text = flipper.dump([IRSignal(frequency=38000, durations=(111, 222, 333))])
     assert "type: raw" in text
@@ -233,7 +233,7 @@ def test_library_import_tree_collects_problems(tmp_path):
 
 
 def test_library_import_pronto(tmp_path):
-    from harmonyforge.ir import pronto
+    from chorus.ir import pronto
 
     signal = protocols.encode("NEC", address=4, command=12)
     library = CodeLibrary(tmp_path / "codes")

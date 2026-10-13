@@ -15,7 +15,7 @@ Three backends are provided:
     hidapi, for platforms where claiming the interface is awkward.
 :class:`FakeTransport`
     A scripted in-memory remote used by the test suite and by
-    ``harmonyforge --dry-run``.
+    ``chorus --dry-run``.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ log = logging.getLogger(__name__)
 
 #: Shown when pyusb is installed but libusb itself cannot be loaded.
 LIBUSB_MISSING = (
-    "pyusb could not find libusb, so harmonyforge cannot talk to USB devices.\n"
+    "pyusb could not find libusb, so chorus cannot talk to USB devices.\n"
     "  Windows: install the hidapi fallback with `pip install hidapi`, or install\n"
     "           a libusb driver for the remote with Zadig (https://zadig.akeo.ie).\n"
     "  macOS:   brew install libusb\n"

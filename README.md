@@ -1,4 +1,4 @@
-# harmonyforge
+# Chorus
 
 **Program Logitech Harmony remotes without Logitech.**
 
@@ -7,19 +7,19 @@ software plus the cloud service it depended on are gone. That left a lot of
 perfectly good hardware unprogrammable: the remotes work, but you cannot
 change what they do.
 
-harmonyforge is an open replacement. It talks to the remote over USB
+Chorus is an open replacement. It talks to the remote over USB
 directly, keeps your configuration in a plain JSON file you own, and sources
 IR codes from open databases instead of a dead cloud service.
 
 ```
-pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
-harmonyforge detect
-harmonyforge backup my-remote.bin     # do this first, always
-harmonyforge serve                    # opens the editor in your browser
+pip install "chorus-remote[hidapi] @ git+https://github.com/av1452/chorus"
+chorus detect
+chorus backup my-remote.bin     # do this first, always
+chorus serve                    # opens the editor in your browser
 ```
 
 **Prefer not to install anything?** The web app runs in your browser:
-**https://av1452.github.io/harmonyforge/** — set up devices, activities and
+**https://av1452.github.io/chorus/** — set up devices, activities and
 buttons, and read newer remotes and hubs over USB (Chrome or Edge). See
 [web/README.md](web/README.md).
 
@@ -62,12 +62,12 @@ the port itself is correct, not just the format it's based on.
 **The write path (`restore`) is still unverified on real hardware.** Nobody
 has confirmed it writes correctly on any model yet. Treat it as unproven
 until someone does. If you try it, please
-[open an issue](https://github.com/av1452/harmonyforge/issues) either way —
+[open an issue](https://github.com/av1452/chorus/issues) either way —
 hardware reports (both working and broken) are the single most useful
 contribution right now, for the write path and for every architecture
 besides 14.
 
-The one thing harmonyforge **cannot** do yet is compile a `RemoteConfig` into
+The one thing Chorus **cannot** do yet is compile a `RemoteConfig` into
 the remote's native binary config format. The outer container of that
 format is now understood and parseable (`config/binary.py`, independently
 re-verified against a real architecture-14 backup — see
@@ -83,7 +83,7 @@ Harmony splits into two incompatible families, and this decides everything.
 
 **USB remotes** — 300, 350, 510, 520, 525, 550, 600, 650, 665, 700, 880, 890,
 One, 1000, 1100, and the rest. These store their configuration in onboard
-flash and were programmed by plugging into USB. This is harmonyforge's main
+flash and were programmed by plugging into USB. This is Chorus's main
 target.
 
 **Hub-based remotes** — Hub, Elite, Companion, Ultimate, Smart Control. The
@@ -92,27 +92,27 @@ configuration lives on the hub and the remote is effectively a radio. Use the
 hubs and touch remotes also have a USB setup interface with a different
 protocol; the [web app](web/README.md) can identify those over USB.
 
-Not sure? Plug it in and run `harmonyforge detect`. If nothing shows up, try
-`harmonyforge hub discover`. See [HARDWARE.md](HARDWARE.md) for the
+Not sure? Plug it in and run `chorus detect`. If nothing shows up, try
+`chorus hub discover`. See [HARDWARE.md](HARDWARE.md) for the
 per-model support matrix.
 
 ## Installing
 
-Needs Python 3.10 or newer. harmonyforge isn't on PyPI yet, so install it
+Needs Python 3.10 or newer. Chorus isn't on PyPI yet, so install it
 straight from GitHub:
 
 ```bash
 # Windows: nothing else to install. The hidapi extra uses Windows' own USB
 # driver, so Zadig isn't needed (confirmed on a Harmony 665).
-pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
+pip install "chorus-remote[hidapi] @ git+https://github.com/av1452/chorus"
 
 # macOS
 brew install libusb
-pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
+pip install "chorus-remote @ git+https://github.com/av1452/chorus"
 
 # Debian / Ubuntu
 sudo apt install libusb-1.0-0
-pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
+pip install "chorus-remote @ git+https://github.com/av1452/chorus"
 ```
 
 If `pip` isn't found on Windows, use `py -m pip` instead.
@@ -120,15 +120,15 @@ If `pip` isn't found on Windows, use `py -m pip` instead.
 On Linux, non-root USB access needs a udev rule:
 
 ```bash
-sudo cp packaging/99-harmonyforge.rules /etc/udev/rules.d/
+sudo cp packaging/99-chorus.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules
 ```
 
 From source:
 
 ```bash
-git clone https://github.com/av1452/harmonyforge
-cd harmonyforge
+git clone https://github.com/av1452/chorus
+cd chorus
 pip install -e ".[dev,yaml]"
 pytest
 ```
@@ -138,8 +138,8 @@ pytest
 ### 1. Back up before anything else
 
 ```bash
-harmonyforge identify          # confirm it is recognised
-harmonyforge backup living-room-2026-10-04.bin
+chorus identify          # confirm it is recognised
+chorus backup living-room-2026-10-04.bin
 ```
 
 This writes the blob plus a `.json` sidecar recording the model and skin ID,
@@ -152,7 +152,7 @@ Learning from your original remotes is the most reliable route, because the
 codes come from the actual hardware:
 
 ```bash
-harmonyforge learn --device "Sony TV" --manufacturer Sony \
+chorus learn --device "Sony TV" --manufacturer Sony \
     --repeat 3 PowerOn PowerOff VolumeUp VolumeDown InputHDMI1
 ```
 
@@ -166,24 +166,24 @@ is the best-maintained open collection:
 
 ```bash
 git clone https://github.com/Lucaslhm/Flipper-IRDB
-harmonyforge codes import Flipper-IRDB
-harmonyforge codes search sony
-harmonyforge codes show sony-bravia --pronto
+chorus codes import Flipper-IRDB
+chorus codes search sony
+chorus codes show sony-bravia --pronto
 ```
 
 LIRC files and Pronto hex work too:
 
 ```bash
-harmonyforge codes import /usr/share/lirc/remotes/sony/lircd.conf.rm-y181
-harmonyforge pronto decode 0000 006D 0022 0002 0157 00AB 0015 0015 ...
-harmonyforge pronto encode NEC address=0x04 command=0x0C
+chorus codes import /usr/share/lirc/remotes/sony/lircd.conf.rm-y181
+chorus pronto decode 0000 006D 0022 0002 0157 00AB 0015 0015 ...
+chorus pronto encode NEC address=0x04 command=0x0C
 ```
 
 ### 3. Build a configuration
 
 ```bash
-harmonyforge config new living-room.json --name "Living Room" -m "Harmony 650"
-harmonyforge serve --config living-room.json
+chorus config new living-room.json --name "Living Room" -m "Harmony 650"
+chorus serve --config living-room.json
 ```
 
 The editor opens at `http://127.0.0.1:8737`. Add devices, pull codes in from
@@ -193,29 +193,29 @@ and selects inputs, and a button map that routes each key to a device.
 Then check it:
 
 ```bash
-harmonyforge config validate living-room.json
+chorus config validate living-room.json
 ```
 
 ### 4. Harmony Hub
 
 ```bash
-harmonyforge hub discover
-harmonyforge hub --address 192.168.1.50 activities
-harmonyforge hub --address 192.168.1.50 start 12345678
-harmonyforge hub --address 192.168.1.50 send 98765432 VolumeUp --hold 400
-harmonyforge hub --address 192.168.1.50 export -o hub.json
+chorus hub discover
+chorus hub --address 192.168.1.50 activities
+chorus hub --address 192.168.1.50 start 12345678
+chorus hub --address 192.168.1.50 send 98765432 VolumeUp --hold 400
+chorus hub --address 192.168.1.50 export -o hub.json
 ```
 
-`export` pulls the hub's device and activity structure into harmonyforge's
+`export` pulls the hub's device and activity structure into Chorus's
 own format. Note that the hub does not expose IR waveforms, so the functions
 come across as named placeholders you then fill in.
 
 ## Using it as a library
 
 ```python
-from harmonyforge.usb.transport import open_remote
-from harmonyforge.usb.remote import HarmonyRemote
-from harmonyforge.ir import protocols, pronto
+from chorus.usb.transport import open_remote
+from chorus.usb.remote import HarmonyRemote
+from chorus.ir import protocols, pronto
 
 with open_remote() as transport:
     remote = HarmonyRemote(transport)
@@ -231,7 +231,7 @@ with open_remote() as transport:
 No hardware needed to explore the IR side:
 
 ```python
-from harmonyforge.ir import protocols, pronto
+from chorus.ir import protocols, pronto
 
 signal = protocols.encode("RC5", address=5, command=0x35)
 print(pronto.format_signal(signal))
@@ -244,7 +244,7 @@ The single most common Harmony complaint was "my activity leaves the TV off."
 That is almost always a power *toggle*: one command that flips state. Send it
 when the device is already on and you turn it off.
 
-harmonyforge makes this explicit. Mark a device `discrete` and give it
+Chorus makes this explicit. Mark a device `discrete` and give it
 separate `PowerOn`/`PowerOff` codes and activities become reliable. Mark it
 `toggle` and `config validate` will warn you. Most TVs have undocumented
 discrete power codes even when their own remote only has a toggle — worth
@@ -267,7 +267,7 @@ hunting for in a code database.
 
 ## Credits
 
-harmonyforge stands entirely on
+Chorus stands entirely on
 [**concordance / libconcord**](https://github.com/jaymzh/concordance) by
 **Kevin Timmerman** and **Phil Dibowitz**, with later work by **Scott
 Talbert**. They reverse-engineered the Harmony USB protocol and have

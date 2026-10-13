@@ -14,7 +14,7 @@ The flow is:
 What you can do with it: read the full device and activity configuration,
 start and stop activities, and send individual IR commands. That makes it
 useful both as a replacement controller and as a way to *export* the codes
-from a working hub config into harmonyforge's own format.
+from a working hub config into chorus's own format.
 """
 
 from __future__ import annotations

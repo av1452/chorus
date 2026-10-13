@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-from harmonyforge.cli import main
-from harmonyforge.config.model import RemoteConfig
+from chorus.cli import main
+from chorus.config.model import RemoteConfig
 
 ROOT = Path(__file__).resolve().parents[1]
 #: Written by the web app's own tests (web/test/store.test.js) from its editing helpers.

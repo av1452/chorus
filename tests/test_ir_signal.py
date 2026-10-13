@@ -2,8 +2,8 @@
 
 import pytest
 
-from harmonyforge.errors import IRError
-from harmonyforge.ir.signal import IRSignal, average
+from chorus.errors import IRError
+from chorus.ir.signal import IRSignal, average
 
 
 def make(*durations, frequency=38000):

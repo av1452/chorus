@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Translate libconcord's remote_info.h into structured JSON.
 
-The model, architecture, flash-chip and sector tables that harmonyforge
+The model, architecture, flash-chip and sector tables that chorus
 needs live in libconcord as C initialisers -- 120 models and 18
 architectures, far too much to transcribe by hand without errors. This
-parses them out so src/harmonyforge/devicedb.py can be generated instead.
+parses them out so src/chorus/devicedb.py can be generated instead.
 
 Usage:
     curl -O https://raw.githubusercontent.com/jaymzh/concordance/main/libconcord/remote_info.h
     python tools/gen_devicedb.py remote_info.h devicedb.json
-    python tools/emit_devicedb.py devicedb.json src/harmonyforge/devicedb.py
+    python tools/emit_devicedb.py devicedb.json src/chorus/devicedb.py
 
 libconcord is GPLv3, by Kevin Timmerman and Phil Dibowitz. See NOTICE.md.
 """

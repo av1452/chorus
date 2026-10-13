@@ -2,9 +2,9 @@
 
 import pytest
 
-from harmonyforge.errors import IRError
-from harmonyforge.ir import protocols
-from harmonyforge.ir.signal import IRSignal
+from chorus.errors import IRError
+from chorus.ir import protocols
+from chorus.ir.signal import IRSignal
 
 
 @pytest.mark.parametrize("address", [0, 1, 0x55, 0xAA, 0xFF])

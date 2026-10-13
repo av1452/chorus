@@ -1,6 +1,6 @@
 # The Harmony USB HID protocol
 
-Reference documentation for the protocol `harmonyforge` speaks to USB
+Reference documentation for the protocol `chorus` speaks to USB
 Harmony remotes. All of this derives from
 [libconcord](https://github.com/jaymzh/concordance) by Kevin Timmerman and
 Phil Dibowitz; it is written down here because a working open
@@ -35,7 +35,7 @@ directly. The report size is the endpoint's `wMaxPacketSize`:
 Every command is one report, zero-padded to that size. Every response is one
 report. Responses must be read until the remote sends `RESPONSE_DONE`.
 
-> On Windows, the HID stack prepends a report-ID byte. harmonyforge's
+> On Windows, the HID stack prepends a report-ID byte. Chorus's
 > `HidApiTransport` adds the leading `0x00`; `PyUsbTransport` writes to the
 > endpoint directly and does not.
 
@@ -236,7 +236,7 @@ little-endian, compare against `cookie`. If it matches, the 3 bytes at
 
 Architecture 10, 11 and 15 use a `REGION_USER_CONFIG` sentinel instead of a
 fixed `config_base`: the region has to be looked up in an on-device table.
-harmonyforge declines these rather than guessing.
+Chorus declines these rather than guessing.
 
 ### Serial numbers
 
@@ -267,8 +267,8 @@ If you have a remote and want to check this implementation, `--debug` logs
 every packet:
 
 ```bash
-harmonyforge --debug identify
-harmonyforge --debug read-flash 0x020000 256
+chorus --debug identify
+chorus --debug read-flash 0x020000 256
 ```
 
 A dump of the first kilobyte of the config region, plus the full

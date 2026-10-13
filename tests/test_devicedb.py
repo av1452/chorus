@@ -1,6 +1,6 @@
 """Hardware table tests."""
 
-from harmonyforge import devicedb
+from chorus import devicedb
 
 
 def test_every_model_index_resolves():

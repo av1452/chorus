@@ -1,17 +1,17 @@
-"""Exception hierarchy for harmonyforge."""
+"""Exception hierarchy for chorus."""
 
 from __future__ import annotations
 
 
-class HarmonyForgeError(Exception):
+class ChorusError(Exception):
     """Base class for every error this package raises."""
 
 
-class RemoteNotFoundError(HarmonyForgeError):
+class RemoteNotFoundError(ChorusError):
     """No Harmony remote was found on the USB bus."""
 
 
-class TransportError(HarmonyForgeError):
+class TransportError(ChorusError):
     """A USB read or write failed."""
 
 
@@ -23,25 +23,25 @@ class UsbBackendMissing(TransportError):
     """pyusb is installed but cannot find libusb, and no hidapi fallback is available."""
 
 
-class ProtocolError(HarmonyForgeError):
+class ProtocolError(ChorusError):
     """The remote sent something we could not make sense of."""
 
 
-class UnsupportedRemoteError(HarmonyForgeError):
+class UnsupportedRemoteError(ChorusError):
     """The remote was identified but this tool cannot program it yet."""
 
 
-class VerifyError(HarmonyForgeError):
+class VerifyError(ChorusError):
     """Data read back from the remote did not match what we wrote."""
 
 
-class ConfigError(HarmonyForgeError):
+class ConfigError(ChorusError):
     """A configuration file is invalid."""
 
 
-class IRError(HarmonyForgeError):
+class IRError(ChorusError):
     """An IR signal could not be parsed, encoded or learned."""
 
 
-class HubError(HarmonyForgeError):
+class HubError(ChorusError):
     """Talking to a Harmony Hub failed."""

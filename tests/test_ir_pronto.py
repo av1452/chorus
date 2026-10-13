@@ -2,9 +2,9 @@
 
 import pytest
 
-from harmonyforge.errors import IRError
-from harmonyforge.ir import pronto, protocols
-from harmonyforge.ir.signal import IRSignal
+from chorus.errors import IRError
+from chorus.ir import pronto, protocols
+from chorus.ir.signal import IRSignal
 
 
 def build_nec_pronto() -> str:

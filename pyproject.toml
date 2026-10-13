@@ -3,14 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "harmonyforge"
+name = "chorus-remote"
 version = "0.1.0"
 description = "Program Logitech Harmony remotes without Logitech. An open replacement for the retired MyHarmony software."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-authors = [{ name = "harmonyforge contributors" }]
+authors = [{ name = "chorus contributors" }]
 keywords = [
     "logitech", "harmony", "myharmony", "universal-remote", "infrared",
     "ir", "pronto", "lirc", "home-theater", "usb", "hid",
@@ -36,18 +36,18 @@ dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4"]
 all = ["hidapi>=0.14", "PyYAML>=6.0"]
 
 [project.urls]
-Homepage = "https://github.com/av1452/harmonyforge"
-Issues = "https://github.com/av1452/harmonyforge/issues"
-Documentation = "https://github.com/av1452/harmonyforge/tree/main/docs"
+Homepage = "https://github.com/av1452/chorus"
+Issues = "https://github.com/av1452/chorus/issues"
+Documentation = "https://github.com/av1452/chorus/tree/main/docs"
 
 [project.scripts]
-harmonyforge = "harmonyforge.cli:main"
+chorus = "chorus.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-harmonyforge = ["server/static/*"]
+chorus = ["server/static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

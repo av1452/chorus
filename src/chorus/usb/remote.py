@@ -153,7 +153,7 @@ class HarmonyRemote:
                 f"{identity.name} reports architecture "
                 f"{identity.architecture_index}, which has no known memory "
                 "layout. Please open an issue with the output of "
-                "`harmonyforge identify --verbose`."
+                "`chorus identify --verbose`."
             )
         return arch
 
@@ -466,7 +466,7 @@ class HarmonyRemote:
         if arch.config_base == devicedb.REGION_USER_CONFIG:
             raise UnsupportedRemoteError(
                 f"{identity.name} stores its config in a region table, which "
-                "harmonyforge cannot read yet (see docs/roadmap.md)."
+                "chorus cannot read yet (see docs/roadmap.md)."
             )
 
         length = (
@@ -486,7 +486,7 @@ class HarmonyRemote:
         """Erase the config region and write ``blob`` into it.
 
         This is the destructive operation. Take a backup with
-        ``harmonyforge backup`` first -- there is no undo on the remote.
+        ``chorus backup`` first -- there is no undo on the remote.
         """
         identity = self._require_identity()
         arch = self._require_arch()
@@ -494,7 +494,7 @@ class HarmonyRemote:
         if arch.config_base == devicedb.REGION_USER_CONFIG:
             raise UnsupportedRemoteError(
                 f"{identity.name} stores its config in a region table, which "
-                "harmonyforge cannot write yet (see docs/roadmap.md)."
+                "chorus cannot write yet (see docs/roadmap.md)."
             )
 
         capacity = identity.flash.size_bytes - (arch.config_base - arch.flash_base)
@@ -517,7 +517,7 @@ class HarmonyRemote:
 
         Point the source remote at the Harmony's IR learning window and press
         a button. Returns the captured signal; raises
-        :class:`~harmonyforge.errors.IRError` if nothing arrives.
+        :class:`~chorus.errors.IRError` if nothing arrives.
         """
         from ..errors import IRError
 

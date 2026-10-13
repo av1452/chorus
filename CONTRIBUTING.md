@@ -11,12 +11,12 @@ more than a feature.
 Safe to run (these only read):
 
 ```bash
-harmonyforge detect
-harmonyforge identify --verbose
-harmonyforge backup my-remote.bin
+chorus detect
+chorus identify --verbose
+chorus backup my-remote.bin
 ```
 
-Then [open an issue](https://github.com/av1452/harmonyforge/issues) with the
+Then [open an issue](https://github.com/av1452/chorus/issues) with the
 `identify --verbose` output and your model. If something failed, add
 `--debug` and include the packet log.
 
@@ -25,15 +25,15 @@ confirmed the write path on your model.
 
 ### 2. Contribute config blobs
 
-The main thing blocking harmonyforge from fully replacing MyHarmony is that
+The main thing blocking Chorus from fully replacing MyHarmony is that
 nobody has reverse-engineered the binary configuration format (see
 [docs/roadmap.md](docs/roadmap.md)). Cracking it needs a corpus of blobs with
 *known* differences:
 
 ```bash
-harmonyforge backup before.bin
+chorus backup before.bin
 # change exactly one thing, using any tool that still works for you
-harmonyforge backup after.bin
+chorus backup after.bin
 ```
 
 A pair like that, with a note saying what changed, isolates fields
@@ -43,8 +43,8 @@ minutes. This is the critical path.
 ## Development setup
 
 ```bash
-git clone https://github.com/av1452/harmonyforge
-cd harmonyforge
+git clone https://github.com/av1452/chorus
+cd chorus
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,yaml]"
 pytest
@@ -58,8 +58,8 @@ ruff check src tests
 `FakeTransport` simulates a remote well enough to exercise the whole stack:
 
 ```python
-from harmonyforge.usb.transport import FakeTransport
-from harmonyforge.usb.remote import HarmonyRemote
+from chorus.usb.transport import FakeTransport
+from chorus.usb.remote import HarmonyRemote
 
 remote = HarmonyRemote(FakeTransport())
 print(remote.identify().summary())
@@ -118,7 +118,7 @@ from libconcord's `remote_info.h`, so:
 - **Comments explain why, not what.** `# RC-5 bit 1 = space,mark. The leading
   space carries no information and cannot be transmitted` earns its place;
   `# increment the counter` does not.
-- **Raise `HarmonyForgeError` subclasses** for anything a user could cause —
+- **Raise `ChorusError` subclasses** for anything a user could cause —
   the CLI catches that type and prints it without a traceback.
 - **Warn rather than refuse** on configuration problems. Half-built configs
   must stay saveable.

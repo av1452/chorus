@@ -6,6 +6,11 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-10-13
+
+First tagged release. It includes everything from the untagged development
+build of 2026-10-04 (listed at the bottom), plus the changes below.
+
 ### Added
 
 - `web/`: Chorus, a browser app merged in from the former `chorus-remote`
@@ -13,7 +18,7 @@ All notable changes to this project are documented here. Format follows
   button maps in the browser, reads newer remotes and hubs over WebHID,
   exports/imports JSON, and works offline as a PWA. Published to GitHub Pages
   by the new `Web app` workflow.
-- The web app now reads and writes the harmonyforge config format directly
+- The web app now reads and writes the Chorus config format directly
   (same keys, same key order), with power style, warm-up time,
   volume/channel/primary roles, start and stop sequences, and the same checks
   as `config validate`. Setups saved by the earlier web app are converted
@@ -32,7 +37,7 @@ All notable changes to this project are documented here. Format follows
   architecture table, and a live USB identity read). Does not decode
   section contents, and writes nothing to a remote. See
   `docs/binary-config-format.md`.
-- `harmonyforge inspect-binary`: CLI command exposing the above against a
+- `chorus inspect-binary`: CLI command exposing the above against a
   file saved by `backup`.
 - 31 new tests against synthetic container blobs (20 for the parser's
   correctness and error paths, covering every architecture signature).
@@ -58,6 +63,14 @@ All notable changes to this project are documented here. Format follows
 
 ### Changed
 
+- **Renamed from harmonyforge to Chorus.** The command is now `chorus`, the
+  Python package is `chorus` (installed as `chorus-remote`, since `chorus` is
+  taken on PyPI), and the repository is
+  [av1452/chorus](https://github.com/av1452/chorus). The IR code library
+  moved from `~/.harmonyforge/codes` to `~/.chorus/codes`, and backup
+  sidecar files record `chorus_version`. The web app is now served at
+  https://av1452.github.io/chorus/ and keeps setups saved under the old name.
+
 - The read path (`detect`, `identify`, `backup`) is now verified against a
   real Harmony 665, not only against the simulated remote. The write path
   remains unverified on any model.
@@ -72,9 +85,9 @@ All notable changes to this project are documented here. Format follows
   model.
 - The usbnet family (890, 900, 1100) is detected but not programmable.
 
-## [0.1.0] — 2026-10-04
+## Development build — 2026-10-04 (untagged)
 
-First release.
+The first working build, published to GitHub but never tagged.
 
 ### Added
 
@@ -96,7 +109,7 @@ First release.
   Flipper Zero `.ir` (parsed and raw records), and recursive directory import
   for collections like Flipper-IRDB.
 - **Code library** — on-disk JSON code sets with search, at
-  `~/.harmonyforge/codes`.
+  `~/.chorus/codes`.
 - **Configuration model** — devices, activities, start/stop sequences, button
   maps and macros, in a diffable JSON file, with validation that catches
   power-toggle desynchronisation, dangling button targets and unreachable

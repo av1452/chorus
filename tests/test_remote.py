@@ -2,11 +2,11 @@
 
 import pytest
 
-from harmonyforge import devicedb
-from harmonyforge.errors import ProtocolError, UnsupportedRemoteError, VerifyError
-from harmonyforge.usb import protocol as p
-from harmonyforge.usb.remote import HarmonyRemote, _format_guid
-from harmonyforge.usb.transport import FakeTransport
+from chorus import devicedb
+from chorus.errors import ProtocolError, UnsupportedRemoteError, VerifyError
+from chorus.usb import protocol as p
+from chorus.usb.remote import HarmonyRemote, _format_guid
+from chorus.usb.transport import FakeTransport
 
 
 def make_remote(**kwargs) -> tuple[HarmonyRemote, FakeTransport]:

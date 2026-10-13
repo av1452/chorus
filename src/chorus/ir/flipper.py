@@ -67,9 +67,9 @@ class FlipperRecord:
         if mapped is None:
             raise IRError(
                 f"{self.name!r} uses protocol {self.protocol!r}, which "
-                "harmonyforge cannot synthesise. Re-export it from the "
+                "chorus cannot synthesise. Re-export it from the "
                 "Flipper as a raw signal, or learn it from the original "
-                "remote with `harmonyforge learn`."
+                "remote with `chorus learn`."
             )
 
         fields: dict[str, int] = {

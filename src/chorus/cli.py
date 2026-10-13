@@ -1,4 +1,4 @@
-"""Command-line interface for harmonyforge."""
+"""Command-line interface for chorus."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ import sys
 from pathlib import Path
 
 from . import __version__, devicedb
-from .errors import HarmonyForgeError
+from .errors import ChorusError
 
-log = logging.getLogger("harmonyforge")
+log = logging.getLogger("chorus")
 
 
 # ---------------------------------------------------------------------------
@@ -112,7 +112,7 @@ def cmd_detect(args, printer: Printer) -> int:
         printer.say("     charge-only -- this is the usual culprit).")
         printer.say("  2. Older remotes must be powered on to enumerate.")
         printer.say("  3. Hub-based remotes (Hub, Elite, Companion, Ultimate)")
-        printer.say("     never appear on USB -- use `harmonyforge hub discover`.")
+        printer.say("     never appear on USB -- use `chorus hub discover`.")
         return 1
 
     printer.heading(f"{len(devices)} remote(s) attached")
@@ -121,10 +121,10 @@ def cmd_detect(args, printer: Printer) -> int:
         if info.is_usbnet:
             printer.warn(
                 "  This is a usbnet-family remote (890/900/1100); "
-                "harmonyforge cannot program it yet."
+                "chorus cannot program it yet."
             )
     printer.say()
-    printer.say("Run `harmonyforge identify` for full details.")
+    printer.say("Run `chorus identify` for full details.")
     return 0
 
 
@@ -194,7 +194,7 @@ def cmd_backup(args, printer: Printer) -> int:
                     "serial": identity.serial,
                     "config_bytes": len(blob),
                     "valid_config": identity.valid_config,
-                    "harmonyforge_version": __version__,
+                    "chorus_version": __version__,
                 },
                 indent=2,
             )
@@ -401,7 +401,7 @@ def cmd_learn(args, printer: Printer) -> int:
             try:
                 code_set = library.find(args.device)
                 printer.say(f"Adding to existing code set: {code_set.label}")
-            except HarmonyForgeError:
+            except ChorusError:
                 code_set = CodeSet(
                     name=args.device,
                     manufacturer=args.manufacturer or "",
@@ -429,7 +429,7 @@ def cmd_learn(args, printer: Printer) -> int:
                 input(f"  Press ENTER, then press '{name}'{suffix}... ")
                 try:
                     signal = remote.learn_ir().snapped()
-                except HarmonyForgeError as exc:
+                except ChorusError as exc:
                     printer.fail(f"  {exc}")
                     break
                 printer.ok(f"  captured {signal}")
@@ -442,7 +442,7 @@ def cmd_learn(args, printer: Printer) -> int:
                 try:
                     signal = average(captures)
                     printer.ok("  averaged the captures")
-                except HarmonyForgeError as exc:
+                except ChorusError as exc:
                     printer.warn(f"  {exc}; keeping the first capture")
                     signal = captures[0]
             else:
@@ -484,10 +484,10 @@ def cmd_codes(args, printer: Printer) -> int:
             printer.say(f"The code library at {library.root} is empty.")
             printer.say()
             printer.say("Fill it by learning codes from your original remotes:")
-            printer.say("  harmonyforge learn --device 'Sony TV' PowerOn VolUp")
+            printer.say("  chorus learn --device 'Sony TV' PowerOn VolUp")
             printer.say()
             printer.say("Or import an existing collection:")
-            printer.say("  harmonyforge codes import ~/Flipper-IRDB")
+            printer.say("  chorus codes import ~/Flipper-IRDB")
             return 0
         printer.heading(f"{len(sets)} code set(s) in {library.root}")
         for code_set in sets:
@@ -631,8 +631,8 @@ def cmd_config(args, printer: Printer) -> int:
         printer.ok(f"Created {target}")
         printer.say()
         printer.say("Next steps:")
-        printer.say("  harmonyforge learn --device 'My TV' PowerOn PowerOff")
-        printer.say(f"  harmonyforge serve --config {target}")
+        printer.say("  chorus learn --device 'My TV' PowerOn PowerOff")
+        printer.say(f"  chorus serve --config {target}")
         return 0
 
     config = RemoteConfig.load(args.path)
@@ -673,7 +673,7 @@ def cmd_hub(args, printer: Printer) -> int:
             printer.say()
             printer.say("SSDP is often blocked across VLANs or by client")
             printer.say("isolation. If you know the hub's IP, skip discovery:")
-            printer.say("  harmonyforge hub info --address 192.168.1.50")
+            printer.say("  chorus hub info --address 192.168.1.50")
             return 1
         printer.heading(f"{len(hubs)} hub(s) found")
         for hub in hubs:
@@ -756,7 +756,7 @@ def cmd_serve(args, printer: Printer) -> int:
     """Run the local web interface."""
     from .server.app import serve
 
-    printer.ok(f"harmonyforge {__version__}")
+    printer.ok(f"chorus {__version__}")
     printer.say(f"Open http://{args.host}:{args.port} in your browser.")
     printer.say("Press Ctrl+C to stop.")
     printer.say()
@@ -781,12 +781,12 @@ def cmd_serve(args, printer: Printer) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="harmonyforge",
+        prog="chorus",
         description=(
             "Program Logitech Harmony remotes without Logitech. "
             "An open replacement for the retired MyHarmony software."
         ),
-        epilog="Full documentation: https://github.com/av1452/harmonyforge",
+        epilog="Full documentation: https://github.com/av1452/chorus",
     )
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument(
@@ -808,7 +808,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--library",
         metavar="DIR",
         default=None,
-        help="IR code library directory (default: ~/.harmonyforge/codes)",
+        help="IR code library directory (default: ~/.chorus/codes)",
     )
 
     sub = parser.add_subparsers(dest="command", metavar="<command>")
@@ -968,12 +968,12 @@ def main(argv: list[str] | None = None) -> int:
     for group in ("codes_command", "pronto_command", "config_command", "hub_command"):
         if hasattr(args, group) and getattr(args, group) is None:
             printer.fail(f"`{args.command}` needs a subcommand")
-            printer.say(f"Try: harmonyforge {args.command} --help")
+            printer.say(f"Try: chorus {args.command} --help")
             return 2
 
     try:
         return args.func(args, printer)
-    except HarmonyForgeError as exc:
+    except ChorusError as exc:
         printer.fail(str(exc))
         return 1
     except KeyboardInterrupt:

@@ -2,7 +2,7 @@
 
 import pytest
 
-from harmonyforge.usb import protocol as p
+from chorus.usb import protocol as p
 
 
 def test_get_version_packet():

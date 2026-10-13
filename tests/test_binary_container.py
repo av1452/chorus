@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from harmonyforge.config.binary import (
+from chorus.config.binary import (
     CONTAINER_SIGNATURES,
     POINTER_TABLE_OFFSET,
     BinaryFormatError,

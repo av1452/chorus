@@ -523,8 +523,8 @@ class RemoteConfig:
         if version > SCHEMA_VERSION:
             raise ConfigError(
                 f"config uses schema version {version}, but this build of "
-                f"harmonyforge understands up to {SCHEMA_VERSION}. Upgrade "
-                "harmonyforge."
+                f"chorus understands up to {SCHEMA_VERSION}. Upgrade "
+                "chorus."
             )
 
         config = cls(
@@ -622,7 +622,7 @@ def _load_yaml(text: str, source: Path) -> dict[str, Any]:
     except ImportError as exc:
         raise ConfigError(
             f"{source} is YAML, which needs PyYAML. Either install it "
-            "(pip install 'harmonyforge[yaml]') or use a .json config."
+            "(pip install 'chorus-remote[yaml]') or use a .json config."
         ) from exc
     data = yaml.safe_load(text)
     if not isinstance(data, dict):
@@ -635,7 +635,7 @@ def _dump_yaml(data: dict[str, Any]) -> str:
         import yaml
     except ImportError as exc:
         raise ConfigError(
-            "writing YAML needs PyYAML (pip install 'harmonyforge[yaml]'). "
+            "writing YAML needs PyYAML (pip install 'chorus-remote[yaml]'). "
             "Save with a .json extension instead."
         ) from exc
     return yaml.safe_dump(data, sort_keys=False, default_flow_style=False)

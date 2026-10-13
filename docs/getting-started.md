@@ -7,7 +7,7 @@ Two things decide how the rest of this goes.
 **Which family is your remote?** USB remotes (300–1100, One) store their
 configuration onboard and are programmed over USB. Hub-based remotes (Hub,
 Elite, Companion, Ultimate, Smart Control) keep it on a hub and are driven
-over your network. `harmonyforge detect` and `harmonyforge hub discover`
+over your network. `chorus detect` and `chorus hub discover`
 will tell you which you have.
 
 **Have you taken a backup?** There is no undo on the device. Take one before
@@ -15,34 +15,34 @@ you write anything.
 
 ## Install
 
-harmonyforge isn't on PyPI yet; install it from GitHub.
+Chorus isn't on PyPI yet; install it from GitHub.
 
 ```bash
 # Windows
-pip install "harmonyforge[hidapi] @ git+https://github.com/av1452/harmonyforge"
+pip install "chorus-remote[hidapi] @ git+https://github.com/av1452/chorus"
 
 # macOS / Linux
 brew install libusb          # macOS
 # or: sudo apt install libusb-1.0-0
-pip install "harmonyforge @ git+https://github.com/av1452/harmonyforge"
+pip install "chorus-remote @ git+https://github.com/av1452/chorus"
 ```
 
 On Linux, allow non-root access to the device:
 
 ```bash
-sudo cp packaging/99-harmonyforge.rules /etc/udev/rules.d/
+sudo cp packaging/99-chorus.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
 On Windows, the `hidapi` extra talks to the remote through Windows' own HID
-driver, so no driver changes are needed: harmonyforge uses it automatically
+driver, so no driver changes are needed: Chorus uses it automatically
 when libusb isn't installed. (Installing a WinUSB driver with
 [Zadig](https://zadig.akeo.ie/) also works, but replaces the remote's driver.)
 
 ## 1. Find the remote
 
 ```bash
-harmonyforge detect
+chorus detect
 ```
 
 Nothing found? In order of likelihood:
@@ -51,13 +51,13 @@ Nothing found? In order of likelihood:
    margin. Try a different cable.
 2. **The remote is off.** Older models must be powered on to enumerate.
 3. **Something else holds the interface.** Close any Logitech software.
-4. **It is a hub remote.** Run `harmonyforge hub discover` instead.
+4. **It is a hub remote.** Run `chorus hub discover` instead.
 
 ## 2. Identify it
 
 ```bash
-harmonyforge identify
-harmonyforge identify --verbose    # adds architecture detail and serials
+chorus identify
+chorus identify --verbose    # adds architecture detail and serials
 ```
 
 ```
@@ -78,7 +78,7 @@ Config size:      184320 / 2031616 bytes (9.1% used)
 ## 3. Back up
 
 ```bash
-harmonyforge backup living-room-2026-10-04.bin
+chorus backup living-room-2026-10-04.bin
 ```
 
 You get two files: the raw blob, and a `.json` sidecar recording the model
@@ -94,7 +94,7 @@ Keep these. They are the only route back.
 The most reliable source, because the codes come off the real hardware:
 
 ```bash
-harmonyforge learn --device "Sony TV" --manufacturer Sony --repeat 3 \
+chorus learn --device "Sony TV" --manufacturer Sony --repeat 3 \
     PowerOn PowerOff VolumeUp VolumeDown Mute InputHDMI1
 ```
 
@@ -122,37 +122,37 @@ best-maintained open collection:
 
 ```bash
 git clone --depth 1 https://github.com/Lucaslhm/Flipper-IRDB
-harmonyforge codes import Flipper-IRDB
-harmonyforge codes list
-harmonyforge codes search bravia
-harmonyforge codes show sony-bravia --pronto
+chorus codes import Flipper-IRDB
+chorus codes list
+chorus codes search bravia
+chorus codes show sony-bravia --pronto
 ```
 
 LIRC also works:
 
 ```bash
-harmonyforge codes import /usr/share/lirc/remotes/sony/lircd.conf.rm-y181
+chorus codes import /usr/share/lirc/remotes/sony/lircd.conf.rm-y181
 ```
 
 ### Pronto hex from a forum
 
 ```bash
-harmonyforge pronto decode 0000 006D 0022 0002 0157 00AB 0015 0015 ...
+chorus pronto decode 0000 006D 0022 0002 0157 00AB 0015 0015 ...
 ```
 
 Or synthesise from a known protocol and code number:
 
 ```bash
-harmonyforge pronto encode NEC address=0x04 command=0x0C
-harmonyforge pronto encode RC5 address=5 command=0x35
-harmonyforge pronto encode SIRC address=1 command=0x15 bits=12
+chorus pronto encode NEC address=0x04 command=0x0C
+chorus pronto encode RC5 address=5 command=0x35
+chorus pronto encode SIRC address=1 command=0x15 bits=12
 ```
 
 ## 5. Build a configuration
 
 ```bash
-harmonyforge config new living-room.json --name "Living Room" -m "Harmony 650"
-harmonyforge serve --config living-room.json
+chorus config new living-room.json --name "Living Room" -m "Harmony 650"
+chorus serve --config living-room.json
 ```
 
 The editor opens at `http://127.0.0.1:8737`.
@@ -173,7 +173,7 @@ to the receiver and the source respectively, not the TV.
 ## 6. Validate
 
 ```bash
-harmonyforge config validate living-room.json
+chorus config validate living-room.json
 ```
 
 This catches the mistakes that actually cause problems:
@@ -187,13 +187,13 @@ This catches the mistakes that actually cause problems:
 ## Harmony Hub
 
 ```bash
-harmonyforge hub discover
-harmonyforge hub -a 192.168.1.50 info
-harmonyforge hub -a 192.168.1.50 activities
-harmonyforge hub -a 192.168.1.50 devices --verbose
-harmonyforge hub -a 192.168.1.50 start 12345678
-harmonyforge hub -a 192.168.1.50 off
-harmonyforge hub -a 192.168.1.50 send 98765432 VolumeUp --hold 400
+chorus hub discover
+chorus hub -a 192.168.1.50 info
+chorus hub -a 192.168.1.50 activities
+chorus hub -a 192.168.1.50 devices --verbose
+chorus hub -a 192.168.1.50 start 12345678
+chorus hub -a 192.168.1.50 off
+chorus hub -a 192.168.1.50 send 98765432 VolumeUp --hold 400
 ```
 
 SSDP discovery fails across VLANs and on networks with client isolation. If

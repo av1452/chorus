@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from harmonyforge.config.model import (
+from chorus.config.model import (
     Activity,
     Device,
     DeviceType,
@@ -13,8 +13,8 @@ from harmonyforge.config.model import (
     RemoteConfig,
     Step,
 )
-from harmonyforge.errors import ConfigError
-from harmonyforge.ir import protocols
+from chorus.errors import ConfigError
+from chorus.ir import protocols
 
 
 def sample_config() -> RemoteConfig:

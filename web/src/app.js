@@ -6,7 +6,7 @@ import { RemoteConnection, webHidSupported } from './usb.js';
 import { REMOTES, hex4 } from './models.js';
 import { toHex } from './protocol.js';
 
-const REPO_URL = 'https://github.com/av1452/harmonyforge';
+const REPO_URL = 'https://github.com/av1452/chorus';
 
 let config = load();
 let remotes = loadRemotes();
@@ -34,7 +34,7 @@ function setTab(tab) {
   for (const b of document.querySelectorAll('.tabs button')) {
     if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   }
-  try { localStorage.setItem('harmonyforge.tab', tab); } catch { /* ignore */ }
+  try { localStorage.setItem('chorus.tab', tab); } catch { /* ignore */ }
   render();
 }
 
@@ -123,7 +123,7 @@ function devicesView() {
     <button class="btn danger" data-act="delete-device" data-name="${esc(d.name)}">Delete</button></div></div>`;
   }).join('');
   return `<h1>Devices</h1>
-    <p class="lede">The things your remote controls. Each device has a list of commands. Commands start as names only; the IR codes come from the harmonyforge command-line tool (learning from your old remote or importing a code database).</p>
+    <p class="lede">The things your remote controls. Each device has a list of commands. Commands start as names only; the IR codes come from the chorus command-line tool (learning from your old remote or importing a code database).</p>
     <div class="row" style="margin-bottom:16px"><button class="btn primary" data-act="new-device">Add device</button></div>
     ${cards ? `<div class="grid">${cards}</div>` : '<div class="card empty">No devices yet.</div>'}`;
 }
@@ -221,7 +221,7 @@ function remoteView() {
                <button class="btn" data-act="usb-disconnect" ${usb.busy ? 'disabled' : ''}>Disconnect</button>`
             : '<button class="btn primary" data-act="usb-connect">Connect remote</button>'}
       </div>
-      ${info?.protocol === 'legacy' ? `<p class="small">This model uses the older USB protocol, which the browser app can’t read yet. Use the harmonyforge command-line tool instead: <code>harmonyforge identify</code>. See <a href="${REPO_URL}#installing">installing harmonyforge</a>.</p>` : ''}
+      ${info?.protocol === 'legacy' ? `<p class="small">This model uses the older USB protocol, which the browser app can’t read yet. Use the chorus command-line tool instead: <code>chorus identify</code>. See <a href="${REPO_URL}#installing">installing chorus</a>.</p>` : ''}
       ${usb.progress ? `<progress value="${usb.progress[0]}" max="${usb.progress[1]}"></progress>` : ''}
       ${usb.error ? `<p class="small" style="color:var(--danger)">${esc(usb.error)}</p>` : ''}
     </div>
@@ -281,7 +281,7 @@ function setupView() {
   const warnings = validate(config);
   const { withCode, total } = irCoverage(config);
   return `<h1>Setup file</h1>
-    <p class="lede">Your setup is saved in this browser and uses the same file format as the harmonyforge command-line tool, so you can move it between the two.</p>
+    <p class="lede">Your setup is saved in this browser and uses the same file format as the chorus command-line tool, so you can move it between the two.</p>
     <div class="card stack">
       <div class="grid">
         <div><label for="s-name">Setup name</label><input id="s-name" data-act="rename-setup" value="${esc(config.name)}"></div>
@@ -293,12 +293,12 @@ function setupView() {
     </div>
     <div class="card stack"><h2>Checks</h2>
       ${warnings.length ? `<ul class="small">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : '<p class="small">No problems found.</p>'}
-      <p class="muted small">The same checks as <code>harmonyforge config validate</code>.</p></div>
+      <p class="muted small">The same checks as <code>chorus config validate</code>.</p></div>
     <div class="card stack"><h2>Using it with the command-line tool</h2>
       <ol class="small">
         <li>Download the setup file (for example <code>${esc(fileName())}</code>).</li>
-        <li>Check it: <code>harmonyforge config validate ${esc(fileName())}</code></li>
-        <li>Add IR codes, by learning from your old remote: <code>harmonyforge learn --device "TV" PowerOn PowerOff</code>, or importing a code database (see the <a href="${REPO_URL}#2-get-ir-codes">README</a>).</li>
+        <li>Check it: <code>chorus config validate ${esc(fileName())}</code></li>
+        <li>Add IR codes, by learning from your old remote: <code>chorus learn --device "TV" PowerOn PowerOff</code>, or importing a code database (see the <a href="${REPO_URL}#2-get-ir-codes">README</a>).</li>
         <li>Open the updated file here again with <strong>Open setup file</strong>.</li>
       </ol></div>
     <div class="card stack"><h2>Start over</h2><p class="muted small">Removes every device and activity from this browser. Download the setup file first if you want to keep it.</p>
@@ -400,7 +400,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 }
 
 try {
-  const saved = localStorage.getItem('harmonyforge.tab') ?? localStorage.getItem('chorus.tab');
+  const saved = localStorage.getItem('chorus.tab') ?? localStorage.getItem('harmonyforge.tab');
   ui.tab = saved === 'backup' ? 'setup' : (views[saved] ? saved : ui.tab);
 } catch { /* ignore */ }
 setTab(ui.tab);

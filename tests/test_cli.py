@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from harmonyforge.cli import build_parser, main
+from chorus.cli import build_parser, main
 
 
 def test_parser_exposes_every_command():
@@ -110,7 +110,7 @@ def test_codes_list_on_an_empty_library(tmp_path, capsys):
     assert main(["--library", str(tmp_path / "codes"), "codes", "list"]) == 0
     out = capsys.readouterr().out
     assert "empty" in out
-    assert "harmonyforge learn" in out
+    assert "chorus learn" in out
 
 
 def test_codes_import_and_show(tmp_path, capsys):

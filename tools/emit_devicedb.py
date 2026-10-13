@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Emit src/harmonyforge/devicedb.py from gen_devicedb.py's JSON output.
+"""Emit src/chorus/devicedb.py from gen_devicedb.py's JSON output.
 
 Usage:
-    python tools/emit_devicedb.py devicedb.json src/harmonyforge/devicedb.py
+    python tools/emit_devicedb.py devicedb.json src/chorus/devicedb.py
 """
 
 import json
